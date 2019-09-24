@@ -24,7 +24,7 @@ import java.util.List;
 public class DestinyManifestReader {
 
     // The manifest file
-    File manifest = null;
+    private File manifest;
 
 
     public DestinyManifestReader(File file)
@@ -35,7 +35,10 @@ public class DestinyManifestReader {
     // Find an item in the database
     public JsonObject findItemInfo(String hash)
     {
+
         try{
+            JsonObject itemInfo = null;
+
             JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(manifest), StandardCharsets.UTF_8));
             Gson gson = new Gson();
 
@@ -57,9 +60,9 @@ public class DestinyManifestReader {
                     }
                     // If this is our hash, return the json object and break the loop
                     else if (path.contains(hash)) {
-                        JsonObject itemInfo = new Gson().fromJson(reader, JsonObject.class);
+                        itemInfo = new Gson().fromJson(reader, JsonObject.class);
 
-                        return itemInfo;
+                        break;
                     }
                     // If this wasn't an object that we care about, move ahead
                     else
@@ -73,6 +76,9 @@ public class DestinyManifestReader {
                     reader.nextName();
                 }
             }
+
+            reader.close();
+            return itemInfo;
 
         }
         catch (IOException e)
