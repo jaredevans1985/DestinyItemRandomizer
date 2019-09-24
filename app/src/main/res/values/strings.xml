@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">DestinyItemRandomizer</string>
+    <string name="action_settings">Settings</string>
+    <string name="app_title">Destiny Item Randomizer</string>
+    <string name="reroll">Reroll</string>
+    <string name="equip">Equip</string>
+    <string name="weap_img_desc">An image of your random weapon</string>
+    <string name="authenticate">Authenticate</string>
+</resources>

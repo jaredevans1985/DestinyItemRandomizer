@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/weaponEntry"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/weaponImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@string/weap_img_desc"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/common" />
+
+    <LinearLayout
+        android:id="@+id/weaponInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/weaponTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Weapon Title"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/weaponType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="WeaponType" />
+
+        <TextView
+            android:id="@+id/weaponElement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="WeaponElement" />
+
+        <TextView
+            android:id="@+id/weaponPower"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="WeaponPower"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:onClick="onClickSingleReroll"
+        android:text="@string/reroll" />
+</LinearLayout>
