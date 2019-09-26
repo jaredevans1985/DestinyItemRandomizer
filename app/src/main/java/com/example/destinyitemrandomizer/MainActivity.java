@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.destinyitemrandomizer.destinywrapper.DestinyAsyncTasks.*;
+import com.example.destinyitemrandomizer.destinywrapper.DestinyInventoryManager;
 import com.google.gson.JsonObject;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
     // This is the api key
     private String apiKey = "7f2b4c1bfb4c4816a3f57cff6b3f8c53";
+
+    // This is the inventory manager
+    private DestinyInventoryManager inventory = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
                 JsonObject characterEquipment = response.getAsJsonObject("characterEquipment");
 
                 Log.d("RESPONSE_PROFILE", "Got the user profile: " + profileInventory.toString());
+
+                // Create our instance of the inventory manager, passing in the data from bungie.net
+                inventory = new DestinyInventoryManager( this, profileInventory, characters, characterInventories, characterEquipment);
+
             }
             else {
                 Log.d("RESPONSE_NONE", "Response does not parse to a known response type");

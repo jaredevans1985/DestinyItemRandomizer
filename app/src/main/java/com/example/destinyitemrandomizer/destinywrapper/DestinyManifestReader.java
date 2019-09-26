@@ -3,6 +3,8 @@ package com.example.destinyitemrandomizer.destinywrapper;
 import android.os.Message;
 import android.text.style.TabStopSpan;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
@@ -23,10 +25,22 @@ import java.util.List;
 // This class is in charge of reading the destiny manifest and returning results from it.
 public class DestinyManifestReader {
 
+    // A static variable that holds the filename
+    public static String manifestFileName = "";
+
     // The manifest file
     private File manifest;
 
+    // Get the file ourselves
+    public DestinyManifestReader(AppCompatActivity activity)
+    {
+        if(!manifestFileName.equals(""))
+        {
+            manifest = activity.getBaseContext().getFileStreamPath(manifestFileName);
+        }
+    }
 
+    // Use a passed in file
     public DestinyManifestReader(File file)
     {
         manifest = file;

@@ -57,6 +57,9 @@ public class LoginActivity extends AppCompatActivity {
         // Get filename
         String filename = manifestUrl.substring(manifestUrl.lastIndexOf("/") + 1);
 
+        // Set the static variable in the reader class
+        DestinyManifestReader.manifestFileName = filename;
+
         // Check internal storage for the manifest
         File file = getBaseContext().getFileStreamPath(filename);
 
@@ -73,11 +76,6 @@ public class LoginActivity extends AppCompatActivity {
 
             this.startService(newIntent);
         }
-
-        // TODO: Create a class to handle parsing and storing the manifest data
-        // TODO: Do this not in here, do it in main activity
-        //DestinyManifestReader reader = new DestinyManifestReader(file);
-        //JsonObject itemInfo = reader.findItemInfo("42249335");    // HELL YES THIS WORKS
 
         // Once the file is loaded, make the authenticate button clickable
         Button button = findViewById(R.id.authButton);
