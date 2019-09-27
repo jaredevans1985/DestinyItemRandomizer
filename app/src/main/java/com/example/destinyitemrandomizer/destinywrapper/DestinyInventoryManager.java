@@ -25,6 +25,8 @@ public class DestinyInventoryManager {
         // Create our instance of the manifest reader
         manifest = new DestinyManifestReader(activity);
 
+        JsonObject test = manifest.findItemInfo("3211806999");
+
         // TODO: Actually do something with the JsonObjects
     }
 

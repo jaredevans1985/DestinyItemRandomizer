@@ -28,6 +28,12 @@ public class DestinyManifestReader {
     // A static variable that holds the filename
     public static String manifestFileName = "";
 
+    // These are the bucket hashes used for sorting items
+    private String kineticBucketHash;
+    private String energyBucketHash;
+    private String powerBucketHash;
+    private String vaultBucketHash;
+
     // The manifest file
     private File manifest;
 
@@ -45,6 +51,24 @@ public class DestinyManifestReader {
     {
         manifest = file;
     }
+
+    // Returns the matching hash value for given bucket
+    public String getBucketHash(String bucket)
+    {
+        // Destiny Inventory Bucket Definition
+        // displayProperties.name
+        switch(bucket)
+        {
+            // Kinetic Weapons - 1498876634
+            // Energy Weapons - 2465295065
+            // Power Weapons - 953998645
+            // Vault (General ?) - 138197802
+        }
+
+        return "0";
+    }
+
+    // Set all bucket hashes for comparison
 
     // Find an item in the database
     public JsonObject findItemInfo(String hash)

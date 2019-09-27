@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     + "&components=200"    // Characters
                     + "&components=201"    // Character inventories (unequipped)
                     + "&components=205";   // Character equipment (equipped)
-
+                    // Item instances is 300, ItemStats is 304
             DestinyTaskGet getInventory = new DestinyTaskGet(this);
             getInventory.execute(endpoint, token);
         }
