@@ -201,5 +201,32 @@ public class DestinyAsyncTasks {
         }
     }
 
+    // Create the Inventory Manager
+    // Do it in another thread in case sorting takes a while
+    public static class DestinyCreateInventoryManagerAsync extends AsyncTask<JsonObject, Void, DestinyInventoryManager> {
+
+        // Pass in the parent activity
+        // TODO: Parent class that all tasks inherit from that has this parent activity
+        private MainActivity activity;
+
+        public DestinyCreateInventoryManagerAsync(MainActivity a) {
+            this.activity = a;
+        }
+
+        protected DestinyInventoryManager doInBackground(JsonObject... jsonObjects) {
+
+            // Kick off creating an inventory manager with the provided info
+            DestinyInventoryManager invMan = new DestinyInventoryManager(this.activity, jsonObjects[0], jsonObjects[1], jsonObjects[2], jsonObjects[3]);
+
+            return invMan;
+        }
+
+        public void onPostExecute(DestinyInventoryManager invMan)
+        {
+            // Set the activity's inventory manager to the newly created instance
+            this.activity.setInventoryManager(invMan);
+        }
+    }
+
 
 }

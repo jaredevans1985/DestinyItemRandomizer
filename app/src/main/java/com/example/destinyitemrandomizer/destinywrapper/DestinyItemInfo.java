@@ -11,13 +11,17 @@ public class DestinyItemInfo {
     public final String itemType;
     public final String itemElement;
     public final String itemPower;
+    public final String instanceID;
+    public final String itemImgUrl;
 
-    public DestinyItemInfo(String name, String type, String element, String power)
+    public DestinyItemInfo(String name, String type, String element, String power, String instance, String imgUrl)
     {
         itemName = name;
         itemType = type;
         itemElement = element;
         itemPower = power;
+        instanceID = instance;
+        itemImgUrl = imgUrl;
     }
 
     public String toString()

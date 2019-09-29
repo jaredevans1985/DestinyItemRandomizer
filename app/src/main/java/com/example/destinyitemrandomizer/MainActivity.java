@@ -92,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("RESPONSE_PROFILE", "Got the user profile: " + profileInventory.toString());
 
                 // Create our instance of the inventory manager, passing in the data from bungie.net
-                inventory = new DestinyInventoryManager( this, profileInventory, characters, characterInventories, characterEquipment);
+                DestinyCreateInventoryManagerAsync managerCreator = new DestinyCreateInventoryManagerAsync(this);
+                managerCreator.execute(profileInventory, characters, characterInventories, characterEquipment);
 
             }
             else {
@@ -159,6 +160,15 @@ public class MainActivity extends AppCompatActivity {
     {
         return !token.equalsIgnoreCase("NO_TOKEN");
     }
+
+    // Set the inventory manager when it is done being created asynchronously
+    public void setInventoryManager(DestinyInventoryManager invMan)
+    {
+        // Set the manager
+
+        // Put the app in a usable mode
+    }
+
 
 
 }

@@ -2,9 +2,12 @@ package com.example.destinyitemrandomizer.destinywrapper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 This class is in charge of managing the user's inventory
@@ -18,16 +21,36 @@ public class DestinyInventoryManager {
     // The manifest manager
     DestinyManifestReader manifest;
 
+    // The currently equipped items for each character
+    DestinyCharacterInfo charA;
+    DestinyCharacterInfo charB;
+    DestinyCharacterInfo charC;
 
-    // Pass in the manifest file and
+    // Sorted item lists
+    List<DestinyItemInfo> kineticWeapons = new ArrayList<DestinyItemInfo>();
+    List<DestinyItemInfo> energyWeapons = new ArrayList<DestinyItemInfo>();
+    List<DestinyItemInfo> powerWeapons = new ArrayList<DestinyItemInfo>();
+
+    // Pass in the manifest file and start the sorting tasks
     public DestinyInventoryManager(AppCompatActivity activity, JsonObject profileInv, JsonObject chars, JsonObject charsInv, JsonObject charsEquip)
     {
         // Create our instance of the manifest reader
         manifest = new DestinyManifestReader(activity);
 
-        JsonObject test = manifest.findItemInfo("3211806999");
+        // Just a test of the manifest
+        //JsonObject test = manifest.findItemInfo("3211806999");
 
         // TODO: Actually do something with the JsonObjects
+
+        // Step 1 - get bucket ids from manifest
+        // Step 2 - Store character info for later use, including full equipped weapon info, id and char description
+        // Step 3 - Compare character inventory to bucket ids and store in appropriate lists with full info
+        // Step 4 - Create a list of all items in the general bucket (must have instance id)
+        // Step 5 - Go through all objects in general bucket, get their info
+        // Step 5b - If it's a weapon, get its full info and store it in the appropriate list
+
+        // Temporary list using during sorting
+        JsonArray unsortedGeneral = new JsonArray();
     }
 
 
