@@ -20,7 +20,9 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // This class is in charge of reading the destiny manifest and returning results from it.
 public class DestinyManifestReader {
@@ -53,19 +55,91 @@ public class DestinyManifestReader {
     }
 
     // Returns the matching hash value for given bucket
-    public String getBucketHash(String bucket)
+    public Map<String, String> getBucketHashes()
     {
+        Map<String, String> buckets = new HashMap<>();
+
         // Destiny Inventory Bucket Definition
         // displayProperties.name
-        switch(bucket)
-        {
+
             // Kinetic Weapons - 1498876634
             // Energy Weapons - 2465295065
             // Power Weapons - 953998645
             // Vault (General ?) - 138197802
+
+        try{
+
+            JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(manifest), StandardCharsets.UTF_8));
+            Gson gson = new Gson();
+
+            // Begin the initial object
+            reader.beginObject();
+
+            // Boolean that marks if we're inside of the bucket definitions
+            boolean insideBucketDefs = false;
+
+            // Look for bucket defs
+            while(reader.hasNext() && !insideBucketDefs)
+            {
+                // Look for the next BEGIN_OBJECT, and check the path
+                if(reader.peek().toString().equals("BEGIN_OBJECT")) {
+                    // Get the path to determine where we are
+                    String path = reader.getPath();
+
+                    // If this is the start of the buckets, begin another object
+                    if (path.equals("$.DestinyInventoryBucketDefinition")) {
+                        reader.beginObject();
+                        insideBucketDefs = true;
+                    }
+                }
+                // If this wasn't an object that we care about, move ahead
+                else
+                {
+                    reader.nextName();
+                }
+            }
+
+            // Once we're there, look for all four bucket hashes
+            while(buckets.size() < 4)
+            {
+                // Begin the next object
+                reader.beginObject();
+
+                // Get it as a JsonObject
+                JsonObject bucketObj = new Gson().fromJson(reader, JsonObject.class);
+
+                // Check what its display property is
+                // Add it and the hash value to the map, or move on
+                // TODO: This could be optimized, I'm sure
+                String bucketName = bucketObj.getAsJsonObject("displayProperties").getAsJsonPrimitive("name").toString();
+
+                bucketName = bucketName.toLowerCase();
+
+                if(bucketName.contains("kinetic")) {
+                    buckets.put("kinetic", bucketObj.getAsJsonPrimitive("hash").toString());
+                }
+                else if (bucketName.contains("energy")) {
+                    buckets.put("energy", bucketObj.getAsJsonPrimitive("hash").toString());
+                }
+                else if (bucketName.contains("power")) {
+                    buckets.put("power", bucketObj.getAsJsonPrimitive("hash").toString());
+                }
+                else if (bucketName.contains("general")) {
+                    buckets.put("general", bucketObj.getAsJsonPrimitive("hash").toString());
+                }
+
+                reader.endObject();
+            }
+
+            reader.close();
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
 
-        return "0";
+        return buckets;
     }
 
     // Set all bucket hashes for comparison
