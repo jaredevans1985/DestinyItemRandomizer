@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 // This class is in charge of reading the destiny manifest and returning results from it.
 public class DestinyManifestReader {
@@ -88,8 +89,13 @@ public class DestinyManifestReader {
 
                     // If this is the start of the buckets, begin another object
                     if (path.equals("$.DestinyInventoryBucketDefinition")) {
-                        reader.beginObject();
+                        //reader.beginObject();
                         insideBucketDefs = true;
+                    }
+                    // If this wasn't an object that we care about, move ahead
+                    else
+                    {
+                        reader.skipValue();
                     }
                 }
                 // If this wasn't an object that we care about, move ahead
@@ -99,39 +105,43 @@ public class DestinyManifestReader {
                 }
             }
 
+            // Get it as a JsonObject
+            JsonObject bucketObj = new Gson().fromJson(reader, JsonObject.class);
+
+            // Close the reader, we're done with it
+            reader.close();
+
             // Once we're there, look for all four bucket hashes
             while(buckets.size() < 4)
             {
-                // Begin the next object
-                reader.beginObject();
 
-                // Get it as a JsonObject
-                JsonObject bucketObj = new Gson().fromJson(reader, JsonObject.class);
+                Set<String> keys = bucketObj.keySet();
 
                 // Check what its display property is
                 // Add it and the hash value to the map, or move on
                 // TODO: This could be optimized, I'm sure
-                String bucketName = bucketObj.getAsJsonObject("displayProperties").getAsJsonPrimitive("name").toString();
+                for(String key : keys)
+                {
+                    JsonObject displayProperties = bucketObj.getAsJsonObject(key).getAsJsonObject("displayProperties");
+                    if(displayProperties.has("name")) {
+                        String bucketName = displayProperties.getAsJsonPrimitive("name").toString();
 
-                bucketName = bucketName.toLowerCase();
+                        bucketName = bucketName.toLowerCase();
 
-                if(bucketName.contains("kinetic")) {
-                    buckets.put("kinetic", bucketObj.getAsJsonPrimitive("hash").toString());
-                }
-                else if (bucketName.contains("energy")) {
-                    buckets.put("energy", bucketObj.getAsJsonPrimitive("hash").toString());
-                }
-                else if (bucketName.contains("power")) {
-                    buckets.put("power", bucketObj.getAsJsonPrimitive("hash").toString());
-                }
-                else if (bucketName.contains("general")) {
-                    buckets.put("general", bucketObj.getAsJsonPrimitive("hash").toString());
+                        if (bucketName.contains("kinetic")) {
+                            buckets.put("kinetic", bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString());
+                        } else if (bucketName.contains("energy")) {
+                            buckets.put("energy", bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString());
+                        } else if (bucketName.contains("power")) {
+                            buckets.put("power", bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString());
+                        } else if (bucketName.contains("general")) {
+                            buckets.put("general", bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString());
+                        }
+                    }
+
                 }
 
-                reader.endObject();
             }
-
-            reader.close();
 
         }
         catch (IOException e)

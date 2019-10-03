@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
     public void setInventoryManager(DestinyInventoryManager invMan)
     {
         // Set the manager
+        inventory = invMan;
 
         // Put the app in a usable mode
     }
