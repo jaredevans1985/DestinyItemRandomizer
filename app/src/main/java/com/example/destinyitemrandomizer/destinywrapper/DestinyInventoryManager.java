@@ -1,5 +1,7 @@
 package com.example.destinyitemrandomizer.destinywrapper;
 
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.JsonArray;
@@ -9,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
 This class is in charge of managing the user's inventory
@@ -23,9 +26,7 @@ public class DestinyInventoryManager {
     DestinyManifestReader manifest;
 
     // The currently equipped items for each character
-    DestinyCharacterInfo charA;
-    DestinyCharacterInfo charB;
-    DestinyCharacterInfo charC;
+    List<DestinyCharacterInfo> characters = new ArrayList<DestinyCharacterInfo>();
 
     // Sorted item lists
     List<DestinyItemInfo> kineticWeapons = new ArrayList<DestinyItemInfo>();
@@ -47,8 +48,15 @@ public class DestinyInventoryManager {
         // TODO: Actually do something with the JsonObjects
 
         // Step 1 - get bucket ids from manifest
-        manifest.getBucketHashes();
+        buckets = manifest.getBucketHashes();
+
         // Step 2 - Store character info for later use, including full equipped weapon info, id and char description
+        Set<String> charKeys = chars.getAsJsonObject("data").keySet();
+        for(String charId :charKeys ) {
+            characters.add(new DestinyCharacterInfo(chars.getAsJsonObject("data").getAsJsonObject(charId), charsInv.getAsJsonObject("data").getAsJsonObject(charId)));
+        }
+
+        Log.d("Noo", "Too");
         // Step 3 - Compare character inventory to bucket ids and store in appropriate lists with full info
         // Step 4 - Create a list of all items in the general bucket (must have instance id)
         // Step 5 - Go through all objects in general bucket, get their info

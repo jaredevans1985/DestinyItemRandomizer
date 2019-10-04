@@ -10,11 +10,12 @@ public class DestinyCharacterInfo {
     public DestinyItemInfo curPower;
     public String charDescription;
 
-    public DestinyCharacterInfo(JsonObject charInfo, DestinyItemInfo kinetic, DestinyItemInfo energy, DestinyItemInfo power) {
+    // Pass in the character info and the character equipment, store need pieces
+    public DestinyCharacterInfo(JsonObject charInfo, JsonObject charEquipped) {
         //charDescription = description;
         //characterID = id;
-        curKinetic = kinetic;
-        curEnergy = energy;
-        curPower = power;
+        //curKinetic = kinetic;
+        //curEnergy = energy;
+       // curPower = power;
     }
 }
