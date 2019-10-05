@@ -76,16 +76,23 @@ public class DestinyAsyncTasks {
 
         protected void onPostExecute(OAuthAccessTokenResponse response)
         {
-            // Get the token
-            String token = response.getAccessToken();
+            try{
 
-            // Set the token
-            this.activity.setToken(token);
+                // Get the token
+                String token = response.getAccessToken();
 
-            // Get additional user details
-            // See if we can get the current user with our valid token
-            DestinyTaskGet memberInfo = new DestinyTaskGet(this.activity);
-            memberInfo.execute("https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/", token);
+                // Set the token
+                this.activity.setToken(token);
+
+                // Get additional user details
+                // See if we can get the current user with our valid token
+                DestinyTaskGet memberInfo = new DestinyTaskGet(this.activity);
+                memberInfo.execute("https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/", token);
+            }
+            catch (NullPointerException e)
+            {
+                Log.d("NO_OAUTH_RESPONSE", "ERROR: No valid Oauth response, try again");
+            }
         }
 
     }

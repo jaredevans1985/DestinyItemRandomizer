@@ -40,7 +40,7 @@ public class DestinyInventoryManager {
     public DestinyInventoryManager(AppCompatActivity activity, JsonObject profileInv, JsonObject chars, JsonObject charsInv, JsonObject charsEquip)
     {
         // Create our instance of the manifest reader
-        manifest = new DestinyManifestReader(activity);
+        manifest = DestinyManifestReader.createDestinyManifestReader(activity);
 
         // Just a test of the manifest
         //JsonObject test = manifest.findItemInfo("3211806999");
@@ -53,10 +53,10 @@ public class DestinyInventoryManager {
         // Step 2 - Store character info for later use, including full equipped weapon info, id and char description
         Set<String> charKeys = chars.getAsJsonObject("data").keySet();
         for(String charId :charKeys ) {
-            characters.add(new DestinyCharacterInfo(chars.getAsJsonObject("data").getAsJsonObject(charId), charsInv.getAsJsonObject("data").getAsJsonObject(charId)));
+            characters.add(new DestinyCharacterInfo(chars.getAsJsonObject("data").getAsJsonObject(charId), charsEquip.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items")));
         }
 
-        Log.d("Noo", "Too");
+
         // Step 3 - Compare character inventory to bucket ids and store in appropriate lists with full info
         // Step 4 - Create a list of all items in the general bucket (must have instance id)
         // Step 5 - Go through all objects in general bucket, get their info

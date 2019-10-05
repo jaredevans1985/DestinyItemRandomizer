@@ -28,6 +28,9 @@ import java.util.Set;
 // This class is in charge of reading the destiny manifest and returning results from it.
 public class DestinyManifestReader {
 
+    // A singleton
+    public static DestinyManifestReader instance;
+
     // A static variable that holds the filename
     public static String manifestFileName = "";
 
@@ -41,12 +44,19 @@ public class DestinyManifestReader {
     private File manifest;
 
     // Get the file ourselves
-    public DestinyManifestReader(AppCompatActivity activity)
+    private DestinyManifestReader(AppCompatActivity activity)
     {
         if(!manifestFileName.equals(""))
         {
             manifest = activity.getBaseContext().getFileStreamPath(manifestFileName);
         }
+    }
+
+    // Create the singleton instance of this class
+    public static DestinyManifestReader createDestinyManifestReader(AppCompatActivity activity)
+    {
+        instance = new DestinyManifestReader(activity);
+        return instance;
     }
 
     // Use a passed in file
