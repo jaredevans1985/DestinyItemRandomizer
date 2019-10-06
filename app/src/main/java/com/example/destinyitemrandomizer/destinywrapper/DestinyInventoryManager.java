@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.destinyitemrandomizer.MainActivity;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -37,7 +38,7 @@ public class DestinyInventoryManager {
     Map<String, String> buckets;
 
     // Pass in the manifest file and start the sorting tasks
-    public DestinyInventoryManager(AppCompatActivity activity, JsonObject profileInv, JsonObject chars, JsonObject charsInv, JsonObject charsEquip)
+    public DestinyInventoryManager(MainActivity activity, JsonObject profileInv, JsonObject chars, JsonObject charsInv, JsonObject charsEquip)
     {
         // Create our instance of the manifest reader
         manifest = DestinyManifestReader.createDestinyManifestReader(activity);
@@ -53,7 +54,7 @@ public class DestinyInventoryManager {
         // Step 2 - Store character info for later use, including full equipped weapon info, id and char description
         Set<String> charKeys = chars.getAsJsonObject("data").keySet();
         for(String charId :charKeys ) {
-            characters.add(new DestinyCharacterInfo(chars.getAsJsonObject("data").getAsJsonObject(charId), charsEquip.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items")));
+            characters.add(new DestinyCharacterInfo(activity, chars.getAsJsonObject("data").getAsJsonObject(charId), charsEquip.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items")));
         }
 
 

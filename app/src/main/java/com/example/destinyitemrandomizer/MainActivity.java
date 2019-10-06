@@ -33,6 +33,22 @@ public class MainActivity extends AppCompatActivity {
     private String membershipID = "";
     private String membershipType = "";
 
+    public String getMembershipID() {
+        return membershipID;
+    }
+
+    public void setMembershipID(String membershipID) {
+        this.membershipID = membershipID;
+    }
+
+    public String getMembershipType() {
+        return membershipType;
+    }
+
+    public void setMembershipType(String membershipType) {
+        this.membershipType = membershipType;
+    }
+
     // This is the api key
     private String apiKey = "7f2b4c1bfb4c4816a3f57cff6b3f8c53";
 

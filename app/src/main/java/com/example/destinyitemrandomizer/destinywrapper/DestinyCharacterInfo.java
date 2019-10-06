@@ -1,5 +1,8 @@
 package com.example.destinyitemrandomizer.destinywrapper;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.destinyitemrandomizer.MainActivity;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -12,11 +15,11 @@ public class DestinyCharacterInfo {
     public String charDescription;
 
     // Pass in the character info and the character equipment, store need pieces
-    public DestinyCharacterInfo(JsonObject charInfo, JsonArray charEquipped) {
+    public DestinyCharacterInfo(MainActivity activity, JsonObject charInfo, JsonArray charEquipped) {
         charDescription = "Desc";
         characterID = "Breakpoint";
-        curKinetic = new DestinyItemInfo(charEquipped.get(0));
-        curEnergy = new DestinyItemInfo(charEquipped.get(1));
-        curPower = new DestinyItemInfo(charEquipped.get(2));
+        curKinetic = new DestinyItemInfo(activity, charEquipped.get(0));
+        curEnergy = new DestinyItemInfo(activity, charEquipped.get(1));
+        curPower = new DestinyItemInfo(activity, charEquipped.get(2));
     }
 }

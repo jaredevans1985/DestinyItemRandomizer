@@ -235,5 +235,62 @@ public class DestinyAsyncTasks {
         }
     }
 
+    // This is used by item info to get item power
+    // Params[0] is the url, params[1] is the OAuth token
+    public static class DestinyTaskGetItemInstance extends AsyncTask<String, Void, JsonObject> {
+        // Pass in the parent activity
+        // TODO: Parent class that all tasks inherit from that has this parent activity
+        private DestinyItemInfo item;
+
+        public DestinyTaskGetItemInstance(DestinyItemInfo i) {
+            this.item = i;
+        }
+
+        protected JsonObject doInBackground(String... params) {
+
+            // Create a request with the provided url and token
+            try {
+                URL obj = new URL(params[0]);
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+                con.setRequestMethod("GET");
+
+                // Set header
+                con.setRequestProperty("X-API-KEY", "7f2b4c1bfb4c4816a3f57cff6b3f8c53");
+                con.setRequestProperty("Authorization", "Bearer " + params[1]);
+
+                int responseCode = con.getResponseCode();
+                Log.d("API_GET_1", "\nSending 'GET' request to Bungie.Net : " + params[0]);
+                Log.d("API_GET_2", "Response Code : " + responseCode);
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                String response = "";
+
+                while ((inputLine = in.readLine()) != null) {
+                    response += inputLine;
+                }
+
+                in.close();
+
+                // Uses Gson - https://github.com/google/gson
+                JsonParser parser = new JsonParser();
+                JsonObject json = (JsonObject) parser.parse(response);
+
+                //Log.d("API_TOKEN_TEST", "\n" + json.getAsJsonObject("Response"));
+
+                return json.getAsJsonObject("Response");
+            } catch (java.io.IOException e) {
+                Log.d("API_GET_ERROR", "Get request failed with error " + e.getMessage());
+            }
+
+            return null;
+        }
+
+        public void onPostExecute(JsonObject response) {
+            this.item.setPower(response);
+        }
+    }
+
 
 }
