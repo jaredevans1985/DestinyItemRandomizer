@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.destinyitemrandomizer.MainActivity;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.File;
@@ -22,6 +23,9 @@ This class provides easy methods for getting random items within provided parame
 This class has an instance of the manifest reader and talks directly to it
 */
 public class DestinyInventoryManager {
+
+    // Our current activity
+    MainActivity activity;
 
     // The manifest manager
     DestinyManifestReader manifest;
@@ -40,6 +44,9 @@ public class DestinyInventoryManager {
     // Pass in the manifest file and start the sorting tasks
     public DestinyInventoryManager(MainActivity activity, JsonObject profileInv, JsonObject chars, JsonObject charsInv, JsonObject charsEquip)
     {
+        // Set the activity
+        this.activity = activity;
+
         // Create our instance of the manifest reader
         manifest = DestinyManifestReader.createDestinyManifestReader(activity);
 
@@ -57,15 +64,49 @@ public class DestinyInventoryManager {
             characters.add(new DestinyCharacterInfo(activity, chars.getAsJsonObject("data").getAsJsonObject(charId), charsEquip.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items")));
         }
 
-
         // Step 3 - Compare character inventory to bucket ids and store in appropriate lists with full info
+        for(String charId :charKeys ) {
+            // Get character inventory
+            JsonArray charInvArray = charsInv.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items");
+
+            // Iterate over inventory and place in buckets
+            for(JsonElement element : charInvArray) {
+                createItemAndPlaceInBucket(element.getAsJsonObject());
+            }
+
+        }
+
         // Step 4 - Create a list of all items in the general bucket (must have instance id)
         // Step 5 - Go through all objects in general bucket, get their info
         // Step 5b - If it's a weapon, get its full info and store it in the appropriate list
 
         // Temporary list using during sorting
         JsonArray unsortedGeneral = new JsonArray();
+
+        Log.d("INVENTORY_COMPLETE", "Inventory object created!");
     }
 
+    // This method takes destiny item info and sorts it into the correct array
+    public void createItemAndPlaceInBucket(JsonElement itemInfo) {
+
+        // Make an item info object
+        DestinyItemInfo item = new DestinyItemInfo(this.activity, itemInfo);
+
+        switch(item.itemElement.toLowerCase()) {
+            case "kinetic":
+                kineticWeapons.add(item);
+                break;
+            case "energy":
+                energyWeapons.add(item);
+                break;
+            case "power":
+                powerWeapons.add(item);
+                break;
+            default:
+                Log.d("ITEM_SORTING_ERROR", "No bucket found for this item");
+                break;
+
+        }
+    }
 
 }
