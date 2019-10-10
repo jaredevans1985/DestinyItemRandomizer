@@ -139,13 +139,13 @@ public class DestinyManifestReader {
                         bucketName = bucketName.toLowerCase();
 
                         if (bucketName.contains("kinetic")) {
-                            buckets.put("kinetic", bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString());
+                            buckets.put(bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString(), "kinetic");
                         } else if (bucketName.contains("energy")) {
-                            buckets.put("energy", bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString());
+                            buckets.put(bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString(), "energy");
                         } else if (bucketName.contains("power")) {
-                            buckets.put("power", bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString());
+                            buckets.put(bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString(), "power");
                         } else if (bucketName.contains("general")) {
-                            buckets.put("general", bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString());
+                            buckets.put(bucketObj.getAsJsonObject(key).getAsJsonPrimitive("hash").toString(), "general");
                         }
                     }
 

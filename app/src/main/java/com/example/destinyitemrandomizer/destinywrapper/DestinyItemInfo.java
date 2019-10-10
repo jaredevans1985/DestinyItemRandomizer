@@ -14,16 +14,18 @@ public class DestinyItemInfo {
 
     public final String itemName;
     public final String itemType;
+    public final String itemBucket;
     public final String itemElement;
     public String itemPower = "ITEM POWER NOT SET";    // TODO: This is so bad... shouldn't have a mix of these
     public final String instanceID;
     public final String itemImgUrl;
     public final boolean isExotic;
 
-    public DestinyItemInfo(String name, String type, String element, String power, String instance, String imgUrl, boolean exotic)
+    public DestinyItemInfo(String name, String type, String element, String power, String instance, String imgUrl, boolean exotic, String bucketHash)
     {
         itemName = name;
         itemType = type;
+        itemBucket = bucketHash;
         itemElement = element;
         instanceID = instance;
         itemPower = power;
@@ -42,6 +44,8 @@ public class DestinyItemInfo {
         itemName = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("name").toString();
 
         itemType = manifestInfo.getAsJsonPrimitive("itemTypeAndTierDisplayName").toString();
+
+        itemBucket = manifestInfo.getAsJsonObject("inventory").getAsJsonPrimitive("bucketTypeHash").toString();
 
         itemElement = getElementName(manifestInfo.getAsJsonPrimitive("defaultDamageType").toString());
 

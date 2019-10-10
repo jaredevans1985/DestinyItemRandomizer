@@ -71,7 +71,13 @@ public class DestinyInventoryManager {
 
             // Iterate over inventory and place in buckets
             for(JsonElement element : charInvArray) {
-                createItemAndPlaceInBucket(element.getAsJsonObject());
+                JsonObject elAsObj = element.getAsJsonObject();
+
+                // Only try and place it in the bucket if it's in a weapon bucket
+                String bucketHash = elAsObj.getAsJsonPrimitive("bucketHash").toString();
+                if(buckets.containsKey(bucketHash)) {
+                    createItemAndPlaceInBucket(elAsObj);
+                }
             }
 
         }
@@ -92,7 +98,13 @@ public class DestinyInventoryManager {
         // Make an item info object
         DestinyItemInfo item = new DestinyItemInfo(this.activity, itemInfo);
 
-        switch(item.itemElement.toLowerCase()) {
+        String itemBucket = buckets.get(item.itemBucket);
+
+        if(itemBucket == null) {
+            Log.d("SORTING_ERROR", "Null exception trying to get item bucket");
+        }
+
+        switch(itemBucket) {
             case "kinetic":
                 kineticWeapons.add(item);
                 break;
