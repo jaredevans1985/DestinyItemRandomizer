@@ -21,19 +21,18 @@ public class DestinyItemInfo {
     public final String itemImgUrl;
     public final boolean isExotic;
 
-    public DestinyItemInfo(String name, String type, String element, String power, String instance, String imgUrl, boolean exotic, String bucketHash)
+    public DestinyItemInfo(String name, String type, String element, String instance, String imgUrl, boolean exotic, String bucketHash)
     {
         itemName = name;
         itemType = type;
         itemBucket = bucketHash;
         itemElement = element;
         instanceID = instance;
-        itemPower = power;
         itemImgUrl = imgUrl;
         isExotic = exotic;
     }
 
-    public DestinyItemInfo(MainActivity activity, JsonElement itemInfo)
+    public DestinyItemInfo(JsonElement itemInfo)
     {
         // TODO: This REAL flimsy, no guarantee this worked by the time we're here
         JsonObject item = itemInfo.getAsJsonObject();
@@ -56,10 +55,6 @@ public class DestinyItemInfo {
         // Use instance ID to get the item power
         instanceID = item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", "");
 
-        // This won't be set until later
-        DestinyAsyncTasks.DestinyTaskGetItemInstance instanceTask = new DestinyAsyncTasks.DestinyTaskGetItemInstance(this);
-        String url = "https://www.bungie.net/Platform/Destiny2/" + activity.getMembershipType() + "/Profile/" + activity.getMembershipID() + "/Item/" + instanceID + "/?components=300";
-        instanceTask.execute(url, activity.getToken());
     }
 
     // Return the string for the damage type
@@ -76,6 +71,13 @@ public class DestinyItemInfo {
             default:
                 return "Damage Type Not Found";
         }
+    }
+
+    // Kick of the async task to get the item power
+    public void requestItemPower(MainActivity activity) {
+        DestinyAsyncTasks.DestinyTaskGetItemInstance instanceTask = new DestinyAsyncTasks.DestinyTaskGetItemInstance(this);
+        String url = "https://www.bungie.net/Platform/Destiny2/" + activity.getMembershipType() + "/Profile/" + activity.getMembershipID() + "/Item/" + instanceID + "/?components=300";
+        instanceTask.execute(url, activity.getToken());
     }
 
     // Set the power when async task is done

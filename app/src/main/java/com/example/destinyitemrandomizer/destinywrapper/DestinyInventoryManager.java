@@ -96,7 +96,7 @@ public class DestinyInventoryManager {
     public void createItemAndPlaceInBucket(JsonElement itemInfo) {
 
         // Make an item info object
-        DestinyItemInfo item = new DestinyItemInfo(this.activity, itemInfo);
+        DestinyItemInfo item = new DestinyItemInfo(itemInfo);
 
         String itemBucket = buckets.get(item.itemBucket);
 
