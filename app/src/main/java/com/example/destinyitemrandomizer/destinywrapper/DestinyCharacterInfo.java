@@ -15,11 +15,12 @@ public class DestinyCharacterInfo {
     public String charDescription;
 
     // Pass in the character info and the character equipment, store need pieces
+    // TODO: Finish setting character info
     public DestinyCharacterInfo(MainActivity activity, JsonObject charInfo, JsonArray charEquipped) {
         charDescription = "Desc";
         characterID = "Breakpoint";
-        curKinetic = new DestinyItemInfo(activity, charEquipped.get(0));
-        curEnergy = new DestinyItemInfo(activity, charEquipped.get(1));
-        curPower = new DestinyItemInfo(activity, charEquipped.get(2));
+        curKinetic = new DestinyItemInfo(charEquipped.get(0));
+        curEnergy = new DestinyItemInfo(charEquipped.get(1));
+        curPower = new DestinyItemInfo(charEquipped.get(2));
     }
 }

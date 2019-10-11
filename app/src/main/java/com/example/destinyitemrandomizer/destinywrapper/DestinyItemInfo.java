@@ -58,7 +58,7 @@ public class DestinyItemInfo {
     }
 
     // Return the string for the damage type
-    private String getElementName(String type) {
+    public static String getElementName(String type) {
         switch(type){
             case("1"):
                 return "Kinetic";
