@@ -14,10 +14,12 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /*
@@ -66,7 +68,7 @@ public class DestinyInventoryManager {
         // Step 2 - Store character info for later use, including full equipped weapon info, id and char description
         Set<String> charKeys = chars.getAsJsonObject("data").keySet();
         for(String charId :charKeys ) {
-            characters.add(new DestinyCharacterInfo(activity, chars.getAsJsonObject("data").getAsJsonObject(charId), charsEquip.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items")));
+            characters.add(new DestinyCharacterInfo(chars.getAsJsonObject("data").getAsJsonObject(charId), charsEquip.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items")));
         }
 
         // Step 3 - Compare character inventory to bucket ids and store in appropriate lists with full info
@@ -115,7 +117,11 @@ public class DestinyInventoryManager {
         }
 
 
-        Log.d("INVENTORY_COMPLETE", "Inventory object created!");
+        //Log.d("INVENTORY_COMPLETE", "Inventory object created!");
+
+        // THIS IS FOR TESTING ONLY
+        //Map<String, DestinyItemInfo> randomItemAssortment = new HashMap<>();
+        //randomItemAssortment = getRandomLoadout();
     }
 
     // This method takes destiny item info and sorts it into the correct array
@@ -187,5 +193,84 @@ public class DestinyInventoryManager {
 
         }
     }
+
+    // This method returns a map that contains an item for each slot
+    // The keys are "kinetic", "energy", and "power"
+    // It will prevent two exotics from being suggested
+    public Map<String, DestinyItemInfo> getRandomLoadout() {
+
+        // Create the map that will be returned
+        Map<String, DestinyItemInfo> itemMap = new HashMap<>();
+
+        // Track if we have space for an exotic weapon
+        boolean exoticAllowed = true;
+
+        // Get the kinetic weapon
+        exoticAllowed = !addRandomWeaponToMap(itemMap, "kinetic", exoticAllowed);
+
+        // Get the energy weapon
+        exoticAllowed = !addRandomWeaponToMap(itemMap, "energy", exoticAllowed);
+
+        // Get the power weapon
+        exoticAllowed = !addRandomWeaponToMap(itemMap, "power", exoticAllowed);
+
+
+        return itemMap;
+    }
+
+    // Adds a random weapon to a map and returns if this weapon is exotic
+    public boolean addRandomWeaponToMap(Map<String, DestinyItemInfo> itemMap, String weaponType, boolean exoticAllowed) {
+        DestinyItemInfo weapon = null;
+
+        // A bit inelegant, but find the right kind of weapon
+        switch(weaponType) {
+            case "kinetic":
+                weapon = getRandomWeapon(kineticWeapons, exoticAllowed);
+                break;
+            case "energy":
+                weapon = getRandomWeapon(energyWeapons, exoticAllowed);
+                break;
+            case "power":
+                weapon = getRandomWeapon(powerWeapons, exoticAllowed);
+                break;
+            default:
+                Log.d("RANDOM_WEAPON_ERROR", "No valid weapon type, must be kinetic, energy or power");
+                break;
+        }
+
+        // Add it to the map
+        itemMap.put(weaponType, weapon);
+
+        // Return if this weapon is exotic
+        return weapon.isExotic;
+    }
+
+    // This method returns a DestinyItemInfo object for the specified bucket
+    public DestinyItemInfo getRandomWeapon(List<DestinyItemInfo> weaponList, boolean exoticAllowed) {
+
+        // Value we'll be returning
+        DestinyItemInfo weapon = null;
+
+        // Random generator
+        Random rand = new Random();
+
+        // This breaks us out of while loops
+        boolean itemFound = false;
+
+        // Get random kinetic weapon
+        while(!itemFound) {
+            int rIndex = rand.nextInt(weaponList.size());
+
+            weapon = weaponList.get(rIndex);
+
+            // We have only found an item if exotics are allowed (thus all weapons are good)
+            // OR this weapon is not exotic
+            itemFound = exoticAllowed || weapon.isExotic == false;
+        }
+
+        return weapon;
+    }
+
+
 
 }

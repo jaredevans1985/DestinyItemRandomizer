@@ -16,11 +16,45 @@ public class DestinyCharacterInfo {
 
     // Pass in the character info and the character equipment, store need pieces
     // TODO: Finish setting character info
-    public DestinyCharacterInfo(MainActivity activity, JsonObject charInfo, JsonArray charEquipped) {
-        charDescription = "Desc";
-        characterID = "Breakpoint";
+    public DestinyCharacterInfo(JsonObject charInfo, JsonArray charEquipped) {
+        charDescription = buildCharacterDescription(charInfo);
+        characterID = charInfo.getAsJsonPrimitive("characterId").toString();
         curKinetic = new DestinyItemInfo(charEquipped.get(0));
         curEnergy = new DestinyItemInfo(charEquipped.get(1));
         curPower = new DestinyItemInfo(charEquipped.get(2));
+    }
+
+    public static String buildCharacterDescription(JsonObject charInfo) {
+        String race = getCharacterRace(charInfo.getAsJsonPrimitive("raceType").getAsString());
+        String charClass = getCharacterClass(charInfo.getAsJsonPrimitive("classType").getAsString());
+        String power = charInfo.getAsJsonPrimitive("light").getAsString();
+
+        return power + " " + race + " " + charClass;
+    }
+
+    public static String getCharacterRace(String raceType) {
+        switch(raceType) {
+            case "0":
+                return "Human";
+            case "1":
+                return "Awoken";
+            case "2":
+                return "Exo";
+            default:
+                return "NO RACE FOUND";
+        }
+    }
+
+    public static String getCharacterClass(String classType) {
+        switch(classType) {
+            case "0":
+                return "Titan";
+            case "1":
+                return "Hunter";
+            case "2":
+                return "Warlock";
+            default:
+                return "NO CLASS FOUND";
+        }
     }
 }

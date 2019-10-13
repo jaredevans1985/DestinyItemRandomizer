@@ -21,15 +21,18 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 // This class holds all of the potential async tasks needed for the app
+// TODO LOW - Parent class that all tasks inherit from that has this parent activity
 public class DestinyAsyncTasks {
 
     // This task gets and returns the Oauth token
     public static class DestinyTaskOAuth extends AsyncTask<String, Void, OAuthAccessTokenResponse>
     {
         // Pass in the parent activity
-        // TODO: Parent class that all tasks inherit from that has this parent activity
+
         private MainActivity activity;
 
         public DestinyTaskOAuth(MainActivity a)
@@ -51,8 +54,12 @@ public class DestinyAsyncTasks {
                         //.buildBodyMessage();
 
                 // Add headers to prevent errors
-                //request.addHeader("Accept", "application/json");
-                //request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+                // SO DUMB that addHeader doesn't work. >=(
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Accept", "application/json");
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                request.setHeaders(headers);
+
             } catch (OAuthSystemException e) {
                 Log.d("OAUTH_REQUEST", e.getMessage());
             }
@@ -101,7 +108,6 @@ public class DestinyAsyncTasks {
     // Params[0] is the url, params[1] is the OAuth token
     public static class DestinyTaskGet extends AsyncTask<String, Void, JsonObject> {
         // Pass in the parent activity
-        // TODO: Parent class that all tasks inherit from that has this parent activity
         private MainActivity activity;
 
         public DestinyTaskGet(MainActivity a) {
@@ -157,7 +163,6 @@ public class DestinyAsyncTasks {
     // This is a get request for the URL of the json manifest
     public static class DestinyGetManifestURL extends AsyncTask<Void, Void, JsonObject> {
         // Pass in the parent activity
-        // TODO: Parent class that all tasks inherit from that has this parent activity
         private LoginActivity activity;
 
         public DestinyGetManifestURL(LoginActivity a) {
@@ -213,7 +218,6 @@ public class DestinyAsyncTasks {
     public static class DestinyCreateInventoryManagerAsync extends AsyncTask<JsonObject, Void, DestinyInventoryManager> {
 
         // Pass in the parent activity
-        // TODO: Parent class that all tasks inherit from that has this parent activity
         private MainActivity activity;
 
         public DestinyCreateInventoryManagerAsync(MainActivity a) {
@@ -239,7 +243,6 @@ public class DestinyAsyncTasks {
     // Params[0] is the url, params[1] is the OAuth token
     public static class DestinyTaskGetItemInstance extends AsyncTask<String, Void, JsonObject> {
         // Pass in the parent activity
-        // TODO: Parent class that all tasks inherit from that has this parent activity
         private DestinyItemInfo item;
 
         public DestinyTaskGetItemInstance(DestinyItemInfo i) {
