@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.destinyitemrandomizer.LoginActivity;
 import com.example.destinyitemrandomizer.MainActivity;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -45,20 +46,19 @@ public class DestinyAsyncTasks {
             // Build a request to get the OAuth token
             OAuthClientRequest request = null;
             try {
-                request = OAuthClientRequest.tokenLocation("https://www.bungie.net/Platform/App/oauth/token/")
+                request = OAuthClientRequest.tokenLocation("https://www.bungie.net/Platform/App/Oauth/Token/")
                         .setGrantType(GrantType.AUTHORIZATION_CODE)
                         .setClientId("29602")
                         .setClientSecret("BIavGLh-ZPr9YKlyx2wPhnXtMbVMsSkloTOotk-X2CQ")
                         .setCode(params[0])
                         .buildBodyMessage();
-                        //.buildBodyMessage();
 
                 // Add headers to prevent errors
                 // SO DUMB that addHeader doesn't work. >=(
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Accept", "application/json");
-                headers.put("Content-Type", "application/x-www-form-urlencoded");
-                request.setHeaders(headers);
+                //Map<String, String> headers = new HashMap<>();
+                //headers.put("Accept", "application/json");
+                //headers.put("Content-Type", "application/x-www-form-urlencoded");
+                //request.setHeaders(headers);
 
             } catch (OAuthSystemException e) {
                 Log.d("OAUTH_REQUEST", e.getMessage());
@@ -69,7 +69,7 @@ public class DestinyAsyncTasks {
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
             //OAuthJSONAccessTokenResponse response = null;
-            OAuthAccessTokenResponse response = null;
+            OAuthJSONAccessTokenResponse response = null;
             try {
                 response = oAuthClient.accessToken(request);
             } catch (OAuthSystemException e) {
@@ -81,12 +81,97 @@ public class DestinyAsyncTasks {
             return response;
         }
 
+
+
         protected void onPostExecute(OAuthAccessTokenResponse response)
         {
             try{
 
                 // Get the token
                 String token = response.getAccessToken();
+
+                String responseBody = response.getBody();
+
+                // Set the token
+                //this.activity.setToken(token);
+                this.activity.storeOauthResponse(responseBody);
+
+                // Get additional user details
+                // See if we can get the current user with our valid token
+                DestinyTaskGet memberInfo = new DestinyTaskGet(this.activity);
+                memberInfo.execute("https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/", token);
+            }
+            catch (NullPointerException e)
+            {
+                Log.d("NO_OAUTH_RESPONSE", "ERROR: No valid Oauth response, try again");
+            }
+        }
+
+    }
+
+    // This task gets and returns the Oauth token
+    public static class DestinyTaskOAuthRefresh extends AsyncTask<String, Void, OAuthAccessTokenResponse>
+    {
+        // Pass in the parent activity
+
+        private MainActivity activity;
+
+        public DestinyTaskOAuthRefresh(MainActivity a)
+        {
+            this.activity = a;
+        }
+
+        protected OAuthAccessTokenResponse doInBackground(String... params) {
+
+            // Build a request to get the OAuth token
+            OAuthClientRequest request = null;
+            try {
+                request = OAuthClientRequest.tokenLocation("https://www.bungie.net/Platform/App/Oauth/Token/")
+                        .setGrantType(GrantType.REFRESH_TOKEN)
+                        .setClientId("29602")
+                        .setClientSecret("BIavGLh-ZPr9YKlyx2wPhnXtMbVMsSkloTOotk-X2CQ")
+                        .setRefreshToken(params[0])
+                        .buildBodyMessage();
+                //.buildBodyMessage();
+
+                // Add headers to prevent errors
+                // SO DUMB that addHeader doesn't work. >=(
+                Map<String, String> headers = new HashMap<>();
+                //headers.put("Accept", "application/json");
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                request.setHeaders(headers);
+
+            } catch (OAuthSystemException e) {
+                Log.d("OAUTH_REFRESH", e.getMessage());
+            }
+
+            // We're just trying some oauth here
+            // See if we can get back a token
+            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+
+            //OAuthJSONAccessTokenResponse response = null;
+            OAuthAccessTokenResponse response = null;
+            try {
+                response = oAuthClient.accessToken(request);
+            } catch (OAuthSystemException e) {
+                Log.d("OAUTH_REFRESH_SYS", e.getMessage());
+            } catch (OAuthProblemException e) {
+                Log.d("OAUTH_REFRESH_PROBLEM", e.getMessage());
+            }
+
+            return response;
+        }
+
+
+
+        protected void onPostExecute(OAuthAccessTokenResponse response)
+        {
+            try{
+
+                // Get the token
+                String token = response.getAccessToken();
+
+                String responseBody = response.getBody();
 
                 // Set the token
                 this.activity.setToken(token);
@@ -98,7 +183,7 @@ public class DestinyAsyncTasks {
             }
             catch (NullPointerException e)
             {
-                Log.d("NO_OAUTH_RESPONSE", "ERROR: No valid Oauth response, try again");
+                Log.d("OAUTH_REFRESH_ERROR", "ERROR: No valid Oauth refresh response, try again");
             }
         }
 

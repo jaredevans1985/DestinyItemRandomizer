@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyAsyncTasks.DestinyGetManifestURL;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyManifestReader;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import net.smartam.leeloo.client.request.OAuthClientRequest;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
@@ -107,8 +109,17 @@ public class LoginActivity extends AppCompatActivity {
         // On success, move ahead
         // On failure, give some error messaging
 
-        // Do some oauth here for the Destiny API
-        // This request will be used to get us a code
+        // Check to see if we have token info stored already
+        SharedPreferences prefs = getSharedPreferences("MyPref", 0);
+        String oauthInfo = prefs.getString("oauth", null);
+
+        if(oauthInfo != null) {
+            JsonObject infoAsObject = new JsonParser().parse(oauthInfo).getAsJsonObject();
+            Log.d("PREF_OAUTH_TEST", "Oauth info stored, exp time of token is: " + infoAsObject.getAsJsonPrimitive("expires_in").toString());
+        }
+
+        // If nothing, send a request for a token
+
         OAuthClientRequest request = null;
         try {
             request = OAuthClientRequest
@@ -120,9 +131,13 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // If there, send refresh token
+
         // Create an intent to get the code and launch the authentication process
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri() + "&response_type=code"));
         startActivity(intent);
+
+
 
     }
 

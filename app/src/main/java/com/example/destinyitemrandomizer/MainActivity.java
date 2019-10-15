@@ -1,6 +1,7 @@
 package com.example.destinyitemrandomizer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -80,6 +81,16 @@ public class MainActivity extends AppCompatActivity {
             // Error reporting for us not getting a proper response
         }
 
+    }
+
+    // Store the oauth response
+    public void storeOauthResponse(String response) {
+        SharedPreferences prefs = getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putString("oauth", response);
+
+        editor.commit();
     }
 
     // This is probably a bad idea, but this method will handle parsing any json response
