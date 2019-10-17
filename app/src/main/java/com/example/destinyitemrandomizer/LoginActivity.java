@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 
 // This activity handles
 public class LoginActivity extends AppCompatActivity {
@@ -103,8 +104,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // Login button callback
-    public void onLoginClick(View v)
-    {
+    public void onLoginClick(View v) {
+
+        // Default intent for later
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+
         // Call into the API wrapper for login
         // On success, move ahead
         // On failure, give some error messaging
@@ -113,31 +117,35 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("MyPref", 0);
         String oauthInfo = prefs.getString("oauth", null);
 
-        if(oauthInfo != null) {
+        if (oauthInfo != null) {
             JsonObject infoAsObject = new JsonParser().parse(oauthInfo).getAsJsonObject();
             Log.d("PREF_OAUTH_TEST", "Oauth info stored, exp time of token is: " + infoAsObject.getAsJsonPrimitive("expires_in").toString());
+
+            // Check expiry date, if past refresh
+            long curTime = (new Date().getTime())/1000;
+
+            if(curTime >= infoAsObject.getAsJsonPrimitive("expires_in").getAsLong())
+            {
+                OAuthClientRequest request = null;
+                try {
+                    request = OAuthClientRequest
+                            .authorizationLocation("https://www.bungie.net/en/OAuth/Authorize")
+                            .setClientId("29602")
+                            .setRedirectURI("myapp://oauthresponse")
+                            .buildQueryMessage();
+                } catch (OAuthSystemException e) {
+                    e.printStackTrace();
+                }
+
+                // If there, send refresh token
+
+                // Create an intent to get the code and launch the authentication process
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri() + "&response_type=code"));
+            }
         }
 
-        // If nothing, send a request for a token
-
-        OAuthClientRequest request = null;
-        try {
-            request = OAuthClientRequest
-                    .authorizationLocation("https://www.bungie.net/en/OAuth/Authorize")
-                    .setClientId("29602")
-                    .setRedirectURI("myapp://oauthresponse")
-                    .buildQueryMessage();
-        } catch (OAuthSystemException e) {
-            e.printStackTrace();
-        }
-
-        // If there, send refresh token
-
-        // Create an intent to get the code and launch the authentication process
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri() + "&response_type=code"));
+        // Start the intent
         startActivity(intent);
-
-
 
     }
 

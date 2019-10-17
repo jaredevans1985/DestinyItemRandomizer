@@ -8,11 +8,13 @@ import android.os.Bundle;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyAsyncTasks.*;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyInventoryManager;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import java.util.Date;
 
 
 // This activity is launched by the intent from the oauth in LoginActivity
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         if (uri != null && uri.toString().startsWith("myapp://oauthresponse"))
         {
             // Get the response code
+            //
             String code = uri.getQueryParameter("code");
 
             // Execute the OAuth task to get the token
@@ -85,6 +88,19 @@ public class MainActivity extends AppCompatActivity {
 
     // Store the oauth response
     public void storeOauthResponse(String response) {
+        // Turn this into a json object so it's easier to edit
+        JsonObject oauthObj = new JsonParser().parse(response).getAsJsonObject();
+
+        // Update the expiry time in the jso object
+        long curTime = (new Date().getTime())/1000;
+        long expTime = curTime + oauthObj.getAsJsonPrimitive("expires_in").getAsLong();
+        oauthObj.remove("expires_in");
+        oauthObj.addProperty("expires_in", ("" + expTime));
+
+        // Turn it back into a string
+        response = oauthObj.toString();
+
+        // Save to shared prefs
         SharedPreferences prefs = getSharedPreferences("MyPref", 0);
         SharedPreferences.Editor editor = prefs.edit();
 
