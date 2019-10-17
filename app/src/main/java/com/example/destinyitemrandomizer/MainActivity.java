@@ -91,13 +91,21 @@ public class MainActivity extends AppCompatActivity {
         // Turn this into a json object so it's easier to edit
         JsonObject oauthObj = new JsonParser().parse(response).getAsJsonObject();
 
-        // Update the expiry time in the jso object
+        // Get current time
         long curTime = (new Date().getTime())/1000;
+
+        // TODO: Make a method for this
+        // Update the expiry time in the jso object
         long expTime = curTime + oauthObj.getAsJsonPrimitive("expires_in").getAsLong();
         oauthObj.remove("expires_in");
         oauthObj.addProperty("expires_in", ("" + expTime));
 
-        // Turn it back into a string
+        // Update the refresh expiry time
+        long refExpTime = curTime + oauthObj.getAsJsonPrimitive("refresh_expires_in").getAsLong();
+        oauthObj.remove("refresh_expires_in");
+        oauthObj.addProperty("refresh_expires_in", ("" + refExpTime));
+
+        // Turn response back into a string
         response = oauthObj.toString();
 
         // Save to shared prefs

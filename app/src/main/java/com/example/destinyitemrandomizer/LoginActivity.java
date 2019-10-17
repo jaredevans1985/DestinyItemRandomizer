@@ -106,8 +106,6 @@ public class LoginActivity extends AppCompatActivity {
     // Login button callback
     public void onLoginClick(View v) {
 
-        // Default intent for later
-        Intent intent = new Intent(Intent.ACTION_VIEW);
 
         // Call into the API wrapper for login
         // On success, move ahead
@@ -140,12 +138,18 @@ public class LoginActivity extends AppCompatActivity {
                 // If there, send refresh token
 
                 // Create an intent to get the code and launch the authentication process
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri() + "&response_type=code"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri() + "&response_type=code"));
+                // Start the intent
+                startActivity(intent);
+            }
+            else
+            {
+                // If we don't need this, just move on
+                setContentView(R.layout.activity_login);
             }
         }
 
-        // Start the intent
-        startActivity(intent);
+
 
     }
 
