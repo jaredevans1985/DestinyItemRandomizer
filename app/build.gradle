@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [ 'appAuthRedirectScheme': '' ]
     }
     buildTypes {
         release {
@@ -32,4 +33,5 @@ dependencies {
     implementation files('libs/oauth2-client.jar')
     implementation files('libs/oauth2-common-0.1.jar')
     implementation files('libs/slf4j-api-1.6.1.jar')
+    implementation 'net.openid:appauth:0.7.1'
 }
