@@ -1,6 +1,5 @@
 package com.example.destinyitemrandomizer;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,10 +19,6 @@ import com.example.destinyitemrandomizer.destinywrapper.DestinyManifestReader;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.openid.appauth.AuthorizationRequest;
-import net.openid.appauth.AuthorizationService;
-import net.openid.appauth.AuthorizationServiceConfiguration;
-import net.openid.appauth.ResponseTypeValues;
 import net.smartam.leeloo.client.request.OAuthClientRequest;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
 
@@ -129,36 +124,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if(curTime >= infoAsObject.getAsJsonPrimitive("expires_in").getAsLong())
             {
-                // NEW OAUTH WITH APPAUTH
-                // Declare the authorization and token endpoints
-                AuthorizationServiceConfiguration serviceConfiguration = new AuthorizationServiceConfiguration(
-                        Uri.parse("https://www.bungie.net/en/OAuth/Authorize") /* auth endpoint*/,
-                        Uri.parse("https://www.bungie.net/Platform/App/Oauth/Token/") /* token endpoint */
-                );
-
-                // Create the Authorization Request
-                String clientID = "29602";
-                Uri redirectUri = Uri.parse("myapp://oauthresponse");
-                AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(
-                        serviceConfiguration,
-                        clientID,
-                        ResponseTypeValues.CODE,
-                        redirectUri
-                );
-                builder.setScopes("profile"); // Not sure if this is right
-                AuthorizationRequest request = builder.build();
-
-                // Perform the authorization request
-                AuthorizationService authorizationService = new AuthorizationService(this); // This maybe should be base context
-
-                Intent authIntent = new Intent(this, MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, request.hashCode(), authIntent, 0);
-
-                authorizationService.performAuthorizationRequest(request, pendingIntent);
-
-                // END NEW OAUTH
-
-                /*OAuthClientRequest request = null;
+                OAuthClientRequest request = null;
                 try {
                     request = OAuthClientRequest
                             .authorizationLocation("https://www.bungie.net/en/OAuth/Authorize")
@@ -174,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Create an intent to get the code and launch the authentication process
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri() + "&response_type=code"));
                 // Start the intent
-                startActivity(intent);*/
+                startActivity(intent);
             }
             else
             {
