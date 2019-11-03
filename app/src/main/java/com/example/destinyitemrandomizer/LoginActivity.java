@@ -124,23 +124,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if(curTime >= infoAsObject.getAsJsonPrimitive("expires_in").getAsLong())
             {
-                OAuthClientRequest request = null;
-                try {
-                    request = OAuthClientRequest
-                            .authorizationLocation("https://www.bungie.net/en/OAuth/Authorize")
-                            .setClientId("29602")
-                            .setRedirectURI("myapp://oauthresponse")
-                            .buildQueryMessage();
-                } catch (OAuthSystemException e) {
-                    e.printStackTrace();
-                }
-
-                // If there, send refresh token
-
-                // Create an intent to get the code and launch the authentication process
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri() + "&response_type=code"));
-                // Start the intent
-                startActivity(intent);
+                startAuthentication();
             }
             else
             {
@@ -148,10 +132,35 @@ public class LoginActivity extends AppCompatActivity {
                 setContentView(R.layout.activity_login);
             }
         }
+        else {
+            startAuthentication();
+        }
 
 
 
     }
+
+    // Get a brand new oauth token, or rather, request the code
+    public void startAuthentication() {
+        OAuthClientRequest request = null;
+        try {
+            request = OAuthClientRequest
+                    .authorizationLocation("https://www.bungie.net/en/OAuth/Authorize")
+                    .setClientId("29602")
+                    .setRedirectURI("myapp://oauthresponse")
+                    .buildQueryMessage();
+        } catch (OAuthSystemException e) {
+            e.printStackTrace();
+        }
+
+        // If there, send refresh token
+
+        // Create an intent to get the code and launch the authentication process
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri() + "&response_type=code"));
+        // Start the intent
+        startActivity(intent);
+    }
+
 
     // Used for reading manifest json file from internal storage
     private String readFromFile() {
