@@ -121,15 +121,27 @@ public class LoginActivity extends AppCompatActivity {
 
             // Check expiry date, if past refresh
             long curTime = (new Date().getTime())/1000;
+            long expiryTime = infoAsObject.getAsJsonPrimitive("expires_in").getAsLong();
 
-            if(curTime >= infoAsObject.getAsJsonPrimitive("expires_in").getAsLong())
+            // If our token is entirely expired, then we need to start the process again
+            if(curTime >= expiryTime)
             {
                 startAuthentication();
             }
             else
             {
-                // If we don't need this, just move on
-                setContentView(R.layout.activity_login);
+                // Other, our token is at least valid, though we may need to refresh
+                Intent startMain = new Intent(this, MainActivity.class);
+
+                long refreshExpiryTime = infoAsObject.getAsJsonPrimitive("refresh_expires_in").getAsLong();
+                if(curTime >= refreshExpiryTime) {
+                    // Add an extra value telling us we need to refresh
+                    startMain.putExtra("NEED_TO_REFRESH", true);
+                }
+
+                // Start our main intent
+                startActivity(startMain);
+
             }
         }
         else {

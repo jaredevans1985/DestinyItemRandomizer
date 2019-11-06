@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Uri uri = intent.getData();
 
+        boolean mustRefresh = false;
+        intent.getBooleanExtra("NEED_TO_REFRESH", mustRefresh);
+
         if (uri != null && uri.toString().startsWith("myapp://oauthresponse"))
         {
             // Get the response code
@@ -78,10 +81,40 @@ public class MainActivity extends AppCompatActivity {
             DestinyTaskOAuth newTask = new DestinyTaskOAuth(this);
             newTask.execute(code);
 
+
+
+        }
+        // Do we need to refresh?
+        else if (mustRefresh) {
+
+            // Get the refresh token
+            SharedPreferences prefs = getSharedPreferences("MyPref", 0);
+            String oauthInfo = prefs.getString("oauth", null);
+            JsonObject infoAsObject = new JsonParser().parse(oauthInfo).getAsJsonObject();
+            String refreshToken = infoAsObject.getAsJsonPrimitive("refresh_token").getAsString();
+
+            // Execute the refresh OAuth task to refresh the token
+            DestinyTaskOAuthRefresh newTask = new DestinyTaskOAuthRefresh(this);
+            newTask.execute(refreshToken);
         }
         else
         {
-            // Error reporting for us not getting a proper response
+            // If we get here...it probably means we have a valid token? So set it?
+            if(token.equalsIgnoreCase("NO_TOKEN")) {
+
+                // Check for token in shared prefs if it's not here
+                // By now we should have a valid token in there
+                // Check to see if we have token info stored already
+                SharedPreferences prefs = getSharedPreferences("MyPref", 0);
+                String oauthInfo = prefs.getString("oauth", null);
+
+                if (oauthInfo != null) {
+                    JsonObject infoAsObject = new JsonParser().parse(oauthInfo).getAsJsonObject();
+                    String accessToken = infoAsObject.getAsJsonPrimitive("access_token").getAsString();
+
+                    setToken(accessToken);
+                }
+            }
         }
 
     }
