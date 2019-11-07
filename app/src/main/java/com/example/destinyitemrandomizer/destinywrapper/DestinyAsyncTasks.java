@@ -68,10 +68,9 @@ public class DestinyAsyncTasks {
             // See if we can get back a token
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
-            //OAuthJSONAccessTokenResponse response = null;
             OAuthJSONAccessTokenResponse response = null;
             try {
-                response = oAuthClient.accessToken(request);
+                response = oAuthClient.accessToken(request, OAuthJSONAccessTokenResponse.class);
             } catch (OAuthSystemException e) {
                 Log.d("OAUTH_SYSTEM_EXC", e.getMessage());
             } catch (OAuthProblemException e) {
