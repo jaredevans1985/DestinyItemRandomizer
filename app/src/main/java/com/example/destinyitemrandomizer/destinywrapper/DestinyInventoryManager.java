@@ -120,8 +120,8 @@ public class DestinyInventoryManager {
         //Log.d("INVENTORY_COMPLETE", "Inventory object created!");
 
         // THIS IS FOR TESTING ONLY
-        //Map<String, DestinyItemInfo> randomItemAssortment = new HashMap<>();
-        //randomItemAssortment = getRandomLoadout();
+        Map<String, DestinyItemInfo> randomItemAssortment = new HashMap<>();
+        randomItemAssortment = getRandomLoadout();
     }
 
     // This method takes destiny item info and sorts it into the correct array

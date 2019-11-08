@@ -113,7 +113,13 @@ public class MainActivity extends AppCompatActivity {
                     String accessToken = infoAsObject.getAsJsonPrimitive("access_token").getAsString();
 
                     setToken(accessToken);
+
+                    // Get membership info
+                    // See if we can get the current user with our valid token
+                    DestinyTaskGet memberInfo = new DestinyTaskGet(this);
+                    memberInfo.execute("https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/", token);
                 }
+
             }
         }
 
