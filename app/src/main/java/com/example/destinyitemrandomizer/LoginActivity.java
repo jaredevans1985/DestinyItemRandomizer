@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.destinyitemrandomizer.destinywrapper.DestinyAsyncTasks.DestinyGetManifestURL;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyManifestReader;
+import com.example.destinyitemrandomizer.destinywrapper.ManifestExtractor;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -23,6 +24,7 @@ import com.google.gson.stream.JsonReader;
 
 import net.smartam.leeloo.client.request.OAuthClientRequest;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,74 +39,14 @@ public class LoginActivity extends AppCompatActivity {
 
     // Broadcast receiver for download completion
     private BroadcastReceiver DownloadReceiver = new BroadcastReceiver(){
-        public void onReceive(Context context, Intent intent){
+        public void onReceive(Context context, Intent intent) {
 
             // Display message from DownloadService
             Bundle b = intent.getExtras();
             String manifest = b.getString(DownloadManifest.EXTRA_MESSAGE);
 
-            // Now, read the file back in and parse it
-            // TODO: Seems dumb to read it back, but, eh...
-            try{
-                JsonObject itemInfo = null;
-                JsonObject bucketInfo = null;
-
-                File file = getBaseContext().getFileStreamPath(DestinyManifestReader.manifestFileName);
-
-                JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
-                Gson gson = new Gson();
-
-                // Begin the initial object
-                reader.beginObject();
-
-                // Look for item database
-                while(reader.hasNext())
-                {
-                    //if(next.equals("DestinyInventoryItemDefinition"))
-                    // Look for the next BEGIN_OBJECT, and check the path
-                    if(reader.peek().toString().equals("BEGIN_OBJECT")) {
-                        // Get the path to determine where we are
-                        String path = reader.getPath();
-
-                        // If this is the start of the inventory items, begin another object
-                        if (path.equals("$.DestinyInventoryItemDefinition")) {
-                            //reader.beginObject();
-
-                            itemInfo = new Gson().fromJson(reader, JsonObject.class);
-                        }
-                        else if (path.equals("$.DestinyInventoryBucketDefinition")) {
-                            //reader.beginObject();
-
-                            bucketInfo = new Gson().fromJson(reader, JsonObject.class);
-                        }
-                        // If this wasn't an object that we care about, move ahead
-                        else
-                        {
-                            reader.skipValue();
-                        }
-                    }
-                    // If this wasn't an object that we care about, move ahead
-                    else
-                    {
-                        reader.nextName();
-                    }
-                }
-
-                reader.close();
-
-                JsonObject newFile = new JsonObject();
-                newFile.add("DestinyInventoryItemDefinition", itemInfo);
-                newFile.add("DestinyInventoryBucketDefinition", bucketInfo);
-
-                // TODO: Serialize this json object back out to a file
-                gson.toJson(newFile, new FileWriter(file));
-
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-
+            // Now that manifest is here, shrink it
+            ManifestExtractor.reduceManifest(getBaseContext().getFileStreamPath(DestinyManifestReader.manifestFileName));
         }
     };
 

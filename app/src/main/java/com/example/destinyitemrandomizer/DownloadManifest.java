@@ -3,22 +3,21 @@ package com.example.destinyitemrandomizer;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
-import android.os.Environment;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
+import com.example.destinyitemrandomizer.destinywrapper.DestinyManifestReader;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
+import org.codehaus.jackson.map.JsonMappingException;
+
+import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -120,12 +119,12 @@ public class DownloadManifest extends IntentService {
 
             }
 
+
             // Send the feedback message to the MainActivity
             Intent backIntent=new Intent(DownloadManifest.ACTION_DOWNLOAD);
             backIntent.putExtra(DownloadManifest.EXTRA_MESSAGE, message);
             sendBroadcast(backIntent);
         }
     }
-
 
 }

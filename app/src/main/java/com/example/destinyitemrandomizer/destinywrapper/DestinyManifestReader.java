@@ -222,5 +222,4 @@ public class DestinyManifestReader {
         return null;
     }
 
-
 }
