@@ -16,19 +16,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.destinyitemrandomizer.destinywrapper.DestinyAsyncTasks.DestinyGetManifestURL;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyManifestReader;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 
 import net.smartam.leeloo.client.request.OAuthClientRequest;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 // This activity handles
@@ -41,6 +42,69 @@ public class LoginActivity extends AppCompatActivity {
             // Display message from DownloadService
             Bundle b = intent.getExtras();
             String manifest = b.getString(DownloadManifest.EXTRA_MESSAGE);
+
+            // Now, read the file back in and parse it
+            // TODO: Seems dumb to read it back, but, eh...
+            try{
+                JsonObject itemInfo = null;
+                JsonObject bucketInfo = null;
+
+                File file = getBaseContext().getFileStreamPath(DestinyManifestReader.manifestFileName);
+
+                JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+                Gson gson = new Gson();
+
+                // Begin the initial object
+                reader.beginObject();
+
+                // Look for item database
+                while(reader.hasNext())
+                {
+                    //if(next.equals("DestinyInventoryItemDefinition"))
+                    // Look for the next BEGIN_OBJECT, and check the path
+                    if(reader.peek().toString().equals("BEGIN_OBJECT")) {
+                        // Get the path to determine where we are
+                        String path = reader.getPath();
+
+                        // If this is the start of the inventory items, begin another object
+                        if (path.equals("$.DestinyInventoryItemDefinition")) {
+                            //reader.beginObject();
+
+                            itemInfo = new Gson().fromJson(reader, JsonObject.class);
+                        }
+                        else if (path.equals("$.DestinyInventoryBucketDefinition")) {
+                            //reader.beginObject();
+
+                            bucketInfo = new Gson().fromJson(reader, JsonObject.class);
+                        }
+                        // If this wasn't an object that we care about, move ahead
+                        else
+                        {
+                            reader.skipValue();
+                        }
+                    }
+                    // If this wasn't an object that we care about, move ahead
+                    else
+                    {
+                        reader.nextName();
+                    }
+                }
+
+                reader.close();
+
+                JsonObject newFile = new JsonObject();
+                newFile.add("DestinyInventoryItemDefinition", itemInfo);
+                newFile.add("DestinyInventoryBucketDefinition", bucketInfo);
+
+                // TODO: Serialize this json object back out to a file
+                gson.toJson(newFile, new FileWriter(file));
+
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
         }
     };
 
@@ -67,8 +131,8 @@ public class LoginActivity extends AppCompatActivity {
         File file = getBaseContext().getFileStreamPath(filename);
 
         // If the file doesn't exist, download it
-        if(!file.exists())
-        {
+        //if(!file.exists())
+        //{
             // TODO: If the file doesn't exist, clear any old json
             //
             // Use IntentService to download manifest
@@ -78,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
             // Start Download Service
 
             this.startService(newIntent);
-        }
+        //}
 
         // Once the file is loaded, make the authenticate button clickable
         Button button = findViewById(R.id.authButton);
@@ -175,7 +239,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     // Used for reading manifest json file from internal storage
-    private String readFromFile() {
+/*    private String readFromFile() {
 
         String ret = "";
         InputStream inputStream = null;
@@ -209,7 +273,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return ret;
-    }
+    }*/
 
 
 }

@@ -5,13 +5,20 @@ import android.content.Intent;
 import android.content.Context;
 import android.os.Environment;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
+
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -89,6 +96,7 @@ public class DownloadManifest extends IntentService {
             }
 
             fos.flush();
+
 
             message="Download completed";
 
