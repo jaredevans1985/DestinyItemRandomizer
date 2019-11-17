@@ -3,6 +3,7 @@ package com.example.destinyitemrandomizer;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.example.destinyitemrandomizer.destinywrapper.DestinyManifestReader;
 
@@ -23,15 +24,12 @@ import java.net.URL;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
 public class DownloadManifest extends IntentService {
-    // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     public static final String ACTION_DOWNLOAD = "com.example.destinyitemrandomizer.action.DOWNLOAD";
 
-    // TODO: Rename parameters
     public static final String EXTRA_URL = "com.example.destinyitemrandomizer.extra.URL";
     public static final String EXTRA_MESSAGE = "com.example.destinyitemrandomizer.extra.MESSAGE";
 
@@ -45,7 +43,6 @@ public class DownloadManifest extends IntentService {
      *
      * @see IntentService
      */
-    // TODO: Customize helper method
     public static void startActionDownload(Context context, String param1) {
         Intent intent = new Intent(context, DownloadManifest.class);
         intent.setAction(ACTION_DOWNLOAD);
@@ -96,6 +93,15 @@ public class DownloadManifest extends IntentService {
 
             fos.flush();
 
+
+            // Store the manifest name in shared prefs
+            // Save to shared prefs
+            SharedPreferences prefs = getSharedPreferences("MyPref", 0);
+            SharedPreferences.Editor editor = prefs.edit();
+
+            editor.putString("manifest", fileName);
+
+            editor.commit();
 
             message="Download completed";
 

@@ -12,14 +12,20 @@ import com.google.gson.JsonObject;
 // Then the info is consumed by the MainActivity for display
 public class DestinyItemInfo {
 
-    public final String itemName;
-    public final String itemType;
-    public final String itemBucket;
-    public final String itemElement;
-    public String itemPower = "ITEM POWER NOT SET";    // TODO: This is so bad... shouldn't have a mix of these
-    public final String instanceID;
-    public final String itemImgUrl;
-    public final boolean isExotic;
+    public String itemName = "ITEM NAME NOT SET";
+    public String itemType = "ITEM TYPE NOT SET";
+    public String itemBucket = "ITEM BUCKET NOT SET";
+    public String itemElement = "ITEM ELEMENT NOT SET";
+    public String itemPower = "ITEM POWER NOT SET";
+    public String instanceID = "ITEM INSTANCE ID NOT SET";
+    public String itemImgUrl = "ITEM IMG URL NOT SET";
+    public boolean isExotic = false;
+
+    public DestinyItemInfo(){}
+
+    public DestinyItemInfo(String bucketHash){
+        itemBucket = bucketHash;
+    }
 
     public DestinyItemInfo(String name, String type, String element, String instance, String imgUrl, boolean exotic, String bucketHash)
     {
@@ -34,7 +40,7 @@ public class DestinyItemInfo {
 
     public DestinyItemInfo(JsonElement itemInfo)
     {
-        // TODO: This REAL flimsy, no guarantee this worked by the time we're here
+        // NOTE: This REAL flimsy, no guarantee this worked by the time we're here
         JsonObject item = itemInfo.getAsJsonObject();
         String hashVal = item.getAsJsonPrimitive("itemHash").toString();
         JsonObject manifestInfo = DestinyManifestReader.instance.findItemInfo(hashVal);

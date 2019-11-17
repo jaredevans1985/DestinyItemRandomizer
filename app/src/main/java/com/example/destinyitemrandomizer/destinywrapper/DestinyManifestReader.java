@@ -8,20 +8,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
+
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -129,7 +128,6 @@ public class DestinyManifestReader {
 
                 // Check what its display property is
                 // Add it and the hash value to the map, or move on
-                // TODO: This could be optimized, I'm sure
                 for(String key : keys)
                 {
                     JsonObject displayProperties = bucketObj.getAsJsonObject(key).getAsJsonObject("displayProperties");
@@ -167,6 +165,9 @@ public class DestinyManifestReader {
     // Find an item in the database
     public JsonObject findItemInfo(String hash)
     {
+
+        // Do some Json parsing here
+
 
         try{
             JsonObject itemInfo = null;

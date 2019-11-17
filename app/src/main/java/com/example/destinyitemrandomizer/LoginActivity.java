@@ -10,28 +10,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.destinyitemrandomizer.destinywrapper.DestinyAsyncTasks.DestinyGetManifestURL;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyManifestReader;
-import com.example.destinyitemrandomizer.destinywrapper.ManifestExtractor;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 
 import net.smartam.leeloo.client.request.OAuthClientRequest;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
 
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 // This activity handles
@@ -45,8 +36,6 @@ public class LoginActivity extends AppCompatActivity {
             Bundle b = intent.getExtras();
             String manifest = b.getString(DownloadManifest.EXTRA_MESSAGE);
 
-            // Now that manifest is here, shrink it
-            ManifestExtractor.reduceManifest(getBaseContext().getFileStreamPath(DestinyManifestReader.manifestFileName));
         }
     };
 
@@ -64,27 +53,38 @@ public class LoginActivity extends AppCompatActivity {
     public void onManifestURLFound(String manifestUrl)
     {
         // Get filename
-        String filename = manifestUrl.substring(manifestUrl.lastIndexOf("/") + 1);
+        String foundFilename = manifestUrl.substring(manifestUrl.lastIndexOf("/") + 1);
 
-        // Set the static variable in the reader class
-        DestinyManifestReader.manifestFileName = filename;
+        // Get the currently stored filename
+        SharedPreferences prefs = getSharedPreferences("MyPref", 0);
+        String storedFilename = prefs.getString("manifest", null);
 
-        // Check internal storage for the manifest
-        File file = getBaseContext().getFileStreamPath(filename);
+        // If we have a file that doesn't match, download the new one
+        if(!foundFilename.equals(storedFilename))
+        {
+            // Clear any old json by recovering the stored file and deleting it
+            File file = null;
+            if(storedFilename != null) {
+                file = getBaseContext().getFileStreamPath(storedFilename);
+            }
 
-        // If the file doesn't exist, download it
-        //if(!file.exists())
-        //{
-            // TODO: If the file doesn't exist, clear any old json
-            //
+            // Actually delete the old file
+            if(file != null && file.exists()) {
+                boolean success = file.delete();
+            }
+
             // Use IntentService to download manifest
             Intent newIntent=new Intent(this, DownloadManifest.class);
             newIntent.setAction(DownloadManifest.ACTION_DOWNLOAD);
             newIntent.putExtra(DownloadManifest.EXTRA_URL, "https://www.bungie.net" + manifestUrl);
             // Start Download Service
 
+
             this.startService(newIntent);
-        //}
+        }
+
+        // Set the static variable in the reader class
+        DestinyManifestReader.manifestFileName = foundFilename;
 
         // Once the file is loaded, make the authenticate button clickable
         Button button = findViewById(R.id.authButton);
@@ -180,42 +180,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    // Used for reading manifest json file from internal storage
-/*    private String readFromFile() {
-
-        String ret = "";
-        InputStream inputStream = null;
-        try {
-            inputStream = openFileInput("names.json");
-
-            if ( inputStream != null ) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
-                    stringBuilder.append(receiveString);
-                }
-
-                ret = stringBuilder.toString();
-            }
-        }
-        catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
-        }
-        finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return ret;
-    }*/
 
 
 }

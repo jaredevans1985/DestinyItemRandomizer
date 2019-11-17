@@ -15,7 +15,6 @@ public class DestinyCharacterInfo {
     public String charDescription;
 
     // Pass in the character info and the character equipment, store need pieces
-    // TODO: Finish setting character info
     public DestinyCharacterInfo(JsonObject charInfo, JsonArray charEquipped) {
         charDescription = buildCharacterDescription(charInfo);
         characterID = charInfo.getAsJsonPrimitive("characterId").toString();

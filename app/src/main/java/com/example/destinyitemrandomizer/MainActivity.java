@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         long curTime = (new Date().getTime())/1000;
 
         // TODO: Make a method for this
-        // Update the expiry time in the jso object
+        // Update the expiry time in the json object
         long expTime = curTime + oauthObj.getAsJsonPrimitive("expires_in").getAsLong();
         oauthObj.remove("expires_in");
         oauthObj.addProperty("expires_in", ("" + expTime));
@@ -224,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
         // Go to results screen
         //setContentView(R.layout.activity_result);
 
-        // TODO: Finalize this code
         // Do a test request for now
         if(isTokenValid())
         {

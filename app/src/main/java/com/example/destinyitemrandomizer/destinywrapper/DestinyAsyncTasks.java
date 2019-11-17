@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // This class holds all of the potential async tasks needed for the app
-// TODO LOW - Parent class that all tasks inherit from that has this parent activity
+// Future Plan - Parent class that all tasks inherit from that has this parent activity
 public class DestinyAsyncTasks {
 
     // This task gets and returns the Oauth token

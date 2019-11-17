@@ -48,6 +48,10 @@ public class DestinyInventoryManager {
     // Bucket Hashes
     Map<String, String> buckets;
 
+    // Item Map
+    // Used before sorting, this item map has keys of item hash values, followed by an empty item object
+    Map<String, DestinyItemInfo> unsortedWeapons = new HashMap<>();
+
     // Pass in the manifest file and start the sorting tasks
     public DestinyInventoryManager(MainActivity activity, JsonObject profileInv, JsonObject chars, JsonObject charsInv, JsonObject charsEquip)
     {
@@ -56,11 +60,6 @@ public class DestinyInventoryManager {
 
         // Create our instance of the manifest reader
         manifest = DestinyManifestReader.createDestinyManifestReader(activity);
-
-        // Just a test of the manifest
-        //JsonObject test = manifest.findItemInfo("3211806999");
-
-        // TODO: Actually do something with the JsonObjects
 
         // Step 1 - get bucket ids from manifest
         buckets = manifest.getBucketHashes();
@@ -71,8 +70,24 @@ public class DestinyInventoryManager {
             characters.add(new DestinyCharacterInfo(chars.getAsJsonObject("data").getAsJsonObject(charId), charsEquip.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items")));
         }
 
-        // Step 3 - Compare character inventory to bucket ids and store in appropriate lists with full info
+        // STEP 3 - Populate the unsorted items list by adding key/value pairs of hash val and a default item info
         for(String charId :charKeys ) {
+            // Get character inventory
+            JsonArray charInvArray = charsInv.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items");
+
+            // Iterate over inventory and place in buckets
+            for(JsonElement element : charInvArray) {
+                JsonObject elAsObj = element.getAsJsonObject();
+
+                // Only try and place it in the bucket if it's in a weapon bucket
+                String itemHash = elAsObj.getAsJsonPrimitive("itemHash").toString();
+
+                unsortedWeapons.put(itemHash, new DestinyItemInfo());
+            }
+        }
+
+        // Old Step 3 - Compare character inventory to bucket ids and store in appropriate lists with full info
+        /*for(String charId :charKeys ) {
             // Get character inventory
             JsonArray charInvArray = charsInv.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items");
 
@@ -86,7 +101,7 @@ public class DestinyInventoryManager {
                     createItemAndPlaceInBucket(elAsObj);
                 }
             }
-        }
+        }*/
 
         // Step 4 - Create a list of all items in the general bucket (must have instance id)
         // Step 4b - Go through all objects in general bucket, get their info
@@ -105,26 +120,27 @@ public class DestinyInventoryManager {
                 // This is annoying, but I need to find out new if this is a weapon or not, which means getting manifest info
                 JsonObject item = element.getAsJsonObject();
                 String hashVal = item.getAsJsonPrimitive("itemHash").toString();
-                JsonObject manifestInfo = DestinyManifestReader.instance.findItemInfo(hashVal);
-                String defaultBucket = manifestInfo.getAsJsonObject("inventory").getAsJsonPrimitive("bucketTypeHash").toString();
+                //JsonObject manifestInfo = DestinyManifestReader.instance.findItemInfo(hashVal);
+                //String defaultBucket = manifestInfo.getAsJsonObject("inventory").getAsJsonPrimitive("bucketTypeHash").toString();
+
+                unsortedWeapons.put(hashVal, new DestinyItemInfo());
 
                 // Now that we have the default bucket, we can see if it's a weapon
-                if (buckets.containsKey(defaultBucket)) {
+               // if (buckets.containsKey(defaultBucket)) {
                     // pass in instance id, default bucket, and manifest info
-                    createItemAndPlaceInBucket(item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", ""), defaultBucket, manifestInfo);
-                }
+                 //   createItemAndPlaceInBucket(item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", ""), defaultBucket, manifestInfo);
+                //}
             }
         }
 
-
-        //Log.d("INVENTORY_COMPLETE", "Inventory object created!");
+        Log.d("INVENTORY_COMPLETE", "Inventory object created!");
 
         // THIS IS FOR TESTING ONLY
         Map<String, DestinyItemInfo> randomItemAssortment = new HashMap<>();
         randomItemAssortment = getRandomLoadout();
     }
 
-    // This method takes destiny item info and sorts it into the correct array
+    // This method takes destiny item info (returned from the manifest) and sorts it into the correct array
     public void createItemAndPlaceInBucket(JsonElement itemInfo) {
 
         // Make an item info object
