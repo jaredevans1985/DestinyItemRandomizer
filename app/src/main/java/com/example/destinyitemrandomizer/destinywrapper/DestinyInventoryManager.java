@@ -118,12 +118,16 @@ public class DestinyInventoryManager {
             if(buckets.containsKey(bucketHash)) {
 
                 // This is annoying, but I need to find out new if this is a weapon or not, which means getting manifest info
-                JsonObject item = element.getAsJsonObject();
-                String hashVal = item.getAsJsonPrimitive("itemHash").toString();
+                //JsonObject item = element.getAsJsonObject();
+                //String hashVal = item.getAsJsonPrimitive("itemHash").toString();
                 //JsonObject manifestInfo = DestinyManifestReader.instance.findItemInfo(hashVal);
                 //String defaultBucket = manifestInfo.getAsJsonObject("inventory").getAsJsonPrimitive("bucketTypeHash").toString();
 
-                unsortedWeapons.put(hashVal, new DestinyItemInfo());
+                // NEW THING: We're just going to put it all in the map, sort it out later
+                JsonObject item = element.getAsJsonObject();
+                String hashVal = item.getAsJsonPrimitive("itemHash").toString();
+                String instanceID = item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", "");
+                unsortedWeapons.put(hashVal, new DestinyItemInfo(instanceID));
 
                 // Now that we have the default bucket, we can see if it's a weapon
                // if (buckets.containsKey(defaultBucket)) {
@@ -135,16 +139,18 @@ public class DestinyInventoryManager {
 
         Log.d("INVENTORY_COMPLETE", "Inventory object created!");
 
+        unsortedWeapons = manifest.sortAllUnsortedItems(unsortedWeapons);
+
         // THIS IS FOR TESTING ONLY
-        Map<String, DestinyItemInfo> randomItemAssortment = new HashMap<>();
-        randomItemAssortment = getRandomLoadout();
+        //Map<String, DestinyItemInfo> randomItemAssortment = new HashMap<>();
+        //randomItemAssortment = getRandomLoadout();
     }
 
     // This method takes destiny item info (returned from the manifest) and sorts it into the correct array
     public void createItemAndPlaceInBucket(JsonElement itemInfo) {
 
         // Make an item info object
-        DestinyItemInfo item = new DestinyItemInfo(itemInfo);
+        DestinyItemInfo item = new DestinyItemInfo(itemInfo.getAsJsonObject());
 
         String itemBucket = buckets.get(item.itemBucket);
 

@@ -18,9 +18,9 @@ public class DestinyCharacterInfo {
     public DestinyCharacterInfo(JsonObject charInfo, JsonArray charEquipped) {
         charDescription = buildCharacterDescription(charInfo);
         characterID = charInfo.getAsJsonPrimitive("characterId").toString();
-        curKinetic = new DestinyItemInfo(charEquipped.get(0));
-        curEnergy = new DestinyItemInfo(charEquipped.get(1));
-        curPower = new DestinyItemInfo(charEquipped.get(2));
+        curKinetic = new DestinyItemInfo(charEquipped.get(0).getAsJsonObject());
+        curEnergy = new DestinyItemInfo(charEquipped.get(1).getAsJsonObject());
+        curPower = new DestinyItemInfo(charEquipped.get(2).getAsJsonObject());
     }
 
     public static String buildCharacterDescription(JsonObject charInfo) {

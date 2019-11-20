@@ -23,8 +23,8 @@ public class DestinyItemInfo {
 
     public DestinyItemInfo(){}
 
-    public DestinyItemInfo(String bucketHash){
-        itemBucket = bucketHash;
+    public DestinyItemInfo(String instanceID){
+        instanceID = instanceID;
     }
 
     public DestinyItemInfo(String name, String type, String element, String instance, String imgUrl, boolean exotic, String bucketHash)
@@ -38,12 +38,20 @@ public class DestinyItemInfo {
         isExotic = exotic;
     }
 
-    public DestinyItemInfo(JsonElement itemInfo)
+    public DestinyItemInfo(JsonObject itemInfo)
     {
         // NOTE: This REAL flimsy, no guarantee this worked by the time we're here
         JsonObject item = itemInfo.getAsJsonObject();
         String hashVal = item.getAsJsonPrimitive("itemHash").toString();
         JsonObject manifestInfo = DestinyManifestReader.instance.findItemInfo(hashVal);
+
+        setFromJsonObject(manifestInfo);
+
+        // Use instance ID to get the item power
+        instanceID = item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", "");
+    }
+
+    public void setFromJsonObject(JsonObject manifestInfo) {
 
         // Get the following info from the manifest
         itemName = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("name").toString();
@@ -57,10 +65,6 @@ public class DestinyItemInfo {
         itemImgUrl = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("icon").toString();
 
         isExotic = itemType.toLowerCase().contains("exotic");
-
-        // Use instance ID to get the item power
-        instanceID = item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", "");
-
     }
 
     // Return the string for the damage type

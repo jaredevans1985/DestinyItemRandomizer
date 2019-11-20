@@ -223,4 +223,67 @@ public class DestinyManifestReader {
         return null;
     }
 
+    // Move through the map of unsorted items and get their info
+    // The idea is that, by doing it all at once now, we only have to go through the file once
+    public Map<String, DestinyItemInfo> sortAllUnsortedItems(Map<String, DestinyItemInfo> unsortedItems) {
+
+        try{
+            JsonObject itemInfo = null;
+
+            JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(manifest), StandardCharsets.UTF_8));
+            Gson gson = new Gson();
+
+            // Begin the initial object
+            reader.beginObject();
+
+            // Look for item database
+            while(reader.hasNext())
+            {
+                //if(next.equals("DestinyInventoryItemDefinition"))
+                // Look for the next BEGIN_OBJECT, and check the path
+                if(reader.peek().toString().equals("BEGIN_OBJECT")) {
+                    // Get the path to determine where we are
+                    String path = reader.getPath();
+
+                    // If this is the start of the inventory items, begin another object
+                    if (path.equals("$.DestinyInventoryItemDefinition")) {
+                        reader.beginObject();
+                    }
+                    // If this is our hash, return the json object and break the loop
+                    else if (unsortedItems.containsKey(path)) {
+                        unsortedItems.get(path).setFromJsonObject((JsonObject) new Gson().fromJson(reader, JsonObject.class));
+
+                        break;
+                    }
+                    // If this wasn't an object that we care about, move ahead
+                    else
+                    {
+                        reader.skipValue();
+                    }
+                }
+                // If this wasn't an object that we care about, move ahead
+                else
+                {
+                    reader.nextName();
+                }
+            }
+
+            reader.close();
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return unsortedItems;
+    }
+
+    public boolean doesPathContainHash(String path, HashMap<String, DestinyItemInfo> unsortedItems) {
+
+
+
+        return false;
+    }
+
 }

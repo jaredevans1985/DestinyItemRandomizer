@@ -92,7 +92,9 @@ public class DestinyAsyncTasks {
                 String responseBody = response.getBody();
 
                 // Set the token
-                //this.activity.setToken(token);
+                this.activity.setToken(token);
+
+                // Store the response
                 this.activity.storeOauthResponse(responseBody);
 
                 // Get additional user details
