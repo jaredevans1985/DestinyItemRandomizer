@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.example.destinyitemrandomizer.LoginActivity;
 import com.example.destinyitemrandomizer.MainActivity;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -52,13 +51,6 @@ public class DestinyAsyncTasks {
                         .setClientSecret("BIavGLh-ZPr9YKlyx2wPhnXtMbVMsSkloTOotk-X2CQ")
                         .setCode(params[0])
                         .buildBodyMessage();
-
-                // Add headers to prevent errors
-                // SO DUMB that addHeader doesn't work. >=(
-                //Map<String, String> headers = new HashMap<>();
-                //headers.put("Accept", "application/json");
-                //headers.put("Content-Type", "application/x-www-form-urlencoded");
-                //request.setHeaders(headers);
 
             } catch (OAuthSystemException e) {
                 Log.d("OAUTH_REQUEST", e.getMessage());
@@ -133,14 +125,6 @@ public class DestinyAsyncTasks {
                         .setClientSecret("BIavGLh-ZPr9YKlyx2wPhnXtMbVMsSkloTOotk-X2CQ")
                         .setRefreshToken(params[0])
                         .buildBodyMessage();
-                //.buildBodyMessage();
-
-                // Add headers to prevent errors
-                // SO DUMB that addHeader doesn't work. >=(
-                Map<String, String> headers = new HashMap<>();
-                //headers.put("Accept", "application/json");
-                headers.put("Content-Type", "application/x-www-form-urlencoded");
-                request.setHeaders(headers);
 
             } catch (OAuthSystemException e) {
                 Log.d("OAUTH_REFRESH", e.getMessage());

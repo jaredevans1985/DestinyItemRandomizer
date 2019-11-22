@@ -80,9 +80,6 @@ public class MainActivity extends AppCompatActivity {
             // Execute the OAuth task to get the token
             DestinyTaskOAuth newTask = new DestinyTaskOAuth(this);
             newTask.execute(code);
-
-
-
         }
         // Do we need to refresh?
         else if (mustRefresh) {

@@ -82,15 +82,21 @@ public class LoginActivity extends AppCompatActivity {
 
             this.startService(newIntent);
         }
+        else {
+            makeAuthenticateClickable();
+        }
 
         // Set the static variable in the reader class
         DestinyManifestReader.manifestFileName = foundFilename;
 
+    }
+
+    // Make authenticate button visible
+    public void makeAuthenticateClickable() {
         // Once the file is loaded, make the authenticate button clickable
         Button button = findViewById(R.id.authButton);
         button.setClickable(true);
         button.setVisibility(View.VISIBLE);
-
     }
 
     // Here for use with download intent

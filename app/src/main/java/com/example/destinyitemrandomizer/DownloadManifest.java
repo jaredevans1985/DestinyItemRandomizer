@@ -5,15 +5,6 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.destinyitemrandomizer.destinywrapper.DestinyManifestReader;
-
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.codehaus.jackson.map.JsonMappingException;
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
