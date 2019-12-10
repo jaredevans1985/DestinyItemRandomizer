@@ -22,7 +22,11 @@ import net.smartam.leeloo.client.request.OAuthClientRequest;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 
 // This activity handles
@@ -47,6 +51,8 @@ public class LoginActivity extends AppCompatActivity {
         // This gets the manifest path
         DestinyGetManifestURL getManifestPath = new DestinyGetManifestURL(this);
         getManifestPath.execute();
+
+
     }
 
     // Get the manifest data to look up item info

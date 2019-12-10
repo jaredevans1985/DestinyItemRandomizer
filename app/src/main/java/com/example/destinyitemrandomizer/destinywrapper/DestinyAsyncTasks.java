@@ -16,17 +16,107 @@ import net.smartam.leeloo.client.response.OAuthJSONAccessTokenResponse;
 import net.smartam.leeloo.common.exception.OAuthProblemException;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
 import net.smartam.leeloo.common.message.types.GrantType;
+import net.smartam.leeloo.common.utils.OAuthUtils;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URLConnection;
 
 // This class holds all of the potential async tasks needed for the app
 // Future Plan - Parent class that all tasks inherit from that has this parent activity
 public class DestinyAsyncTasks {
+
+    protected static final String CLIENT_ID = "29602";
+    protected static final String CLIENT_SECRET = "BIavGLh-ZPr9YKlyx2wPhnXtMbVMsSkloTOotk-X2CQ";
+
+    // This a simple post version of the oauth token request
+    // This is is a generic task for Get request from the Destiny API
+    // Params[0] is the url, params[1] is the OAuth token
+    public static class DestinyTaskSimpleOAuth extends AsyncTask<String, Void, String> {
+        // Pass in the parent activity
+        private MainActivity activity;
+
+        public DestinyTaskSimpleOAuth(MainActivity a) {
+            this.activity = a;
+        }
+
+        protected String doInBackground(String... params) {
+
+            // Create a request with the provided url and token
+            try {
+
+                // Fully formed URL
+                // https://www.bungie.net/Platform/App/Oauth/Token/code=384c3f1c783dff894b68078b09d9e473&grant_type=authorization_code&client_secret=BIavGLh-ZPr9YKlyx2wPhnXtMbVMsSkloTOotk-X2CQ&client_id=29602
+
+                URL url = new URL("https://www.bungie.net/Platform/App/Oauth/Token/");
+                URLConnection c = url.openConnection();
+                int responseCode = -1;
+                HttpURLConnection httpURLConnection = (HttpURLConnection)c;
+
+
+                httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+                // Make this a post request
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                OutputStream ost = httpURLConnection.getOutputStream();
+                PrintWriter pw = new PrintWriter(ost);
+
+                String body = "code=" + params[0] + "&grant_type=authorization_code&client_secret=" + CLIENT_SECRET + "&client_id=" + CLIENT_ID;
+                pw.print(body);
+                pw.flush();
+                pw.close();
+
+                httpURLConnection.connect();
+                responseCode = httpURLConnection.getResponseCode();
+                InputStream inputStream;
+                if (responseCode == 400) {
+                    inputStream = httpURLConnection.getErrorStream();
+                } else {
+                    inputStream = httpURLConnection.getInputStream();
+                }
+
+                String responseBody = OAuthUtils.saveStreamAsString(inputStream);
+
+                // This is weird, but the response I get has a ton of dead characters, I so I'm taking them out
+                responseBody = responseBody.replaceAll("\u0000", "");
+
+                // Uses Gson - https://github.com/google/gson
+                JsonParser parser = new JsonParser();
+                JsonObject json = (JsonObject) parser.parse(responseBody);
+
+                return json.getAsJsonPrimitive("access_token").getAsString();
+
+            } catch (java.io.IOException e) {
+                Log.d("API_GET_ERROR", "Get request failed with error " + e.getMessage());
+            }
+
+            return null;
+        }
+
+        public void onPostExecute(String accessToken) {
+
+            try{
+
+                // Set the token
+                this.activity.setToken(accessToken);
+
+                // Get additional user details
+                // See if we can get the current user with our valid token
+                DestinyTaskGet memberInfo = new DestinyTaskGet(this.activity);
+                memberInfo.execute("https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/", accessToken);
+            }
+            catch (NullPointerException e)
+            {
+                Log.d("OAUTH_REFRESH_ERROR", "ERROR: No valid Oauth refresh response, try again");
+            }
+        }
+    }
 
     // This task gets and returns the Oauth token
     public static class DestinyTaskOAuth extends AsyncTask<String, Void, OAuthAccessTokenResponse>
@@ -60,9 +150,10 @@ public class DestinyAsyncTasks {
             // See if we can get back a token
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
-            OAuthJSONAccessTokenResponse response = null;
+            OAuthAccessTokenResponse response = null;
             try {
-                response = oAuthClient.accessToken(request, OAuthJSONAccessTokenResponse.class);
+                //response = oAuthClient.accessToken(request, OAuthJSONAccessTokenResponse.class);
+                response = oAuthClient.accessToken(request);
             } catch (OAuthSystemException e) {
                 Log.d("OAUTH_SYSTEM_EXC", e.getMessage());
             } catch (OAuthProblemException e) {
@@ -71,7 +162,6 @@ public class DestinyAsyncTasks {
 
             return response;
         }
-
 
 
         protected void onPostExecute(OAuthAccessTokenResponse response)

@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
             String code = uri.getQueryParameter("code");
 
             // Execute the OAuth task to get the token
-            DestinyTaskOAuth newTask = new DestinyTaskOAuth(this);
+            DestinyTaskSimpleOAuth newTask = new DestinyTaskSimpleOAuth(this);
+            //DestinyTaskOAuth newTask = new DestinyTaskOAuth(this);
             newTask.execute(code);
         }
         // Do we need to refresh?
