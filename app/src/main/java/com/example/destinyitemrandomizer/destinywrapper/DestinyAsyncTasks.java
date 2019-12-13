@@ -86,11 +86,7 @@ public class DestinyAsyncTasks {
                 // This is weird, but the response I get has a ton of dead characters, I so I'm taking them out
                 responseBody = responseBody.replaceAll("\u0000", "");
 
-                // Uses Gson - https://github.com/google/gson
-                JsonParser parser = new JsonParser();
-                JsonObject json = (JsonObject) parser.parse(responseBody);
-
-                return json.getAsJsonPrimitive("access_token").getAsString();
+                return responseBody;
 
             } catch (java.io.IOException e) {
                 Log.d("API_GET_ERROR", "Get request failed with error " + e.getMessage());
@@ -99,12 +95,21 @@ public class DestinyAsyncTasks {
             return null;
         }
 
-        public void onPostExecute(String accessToken) {
+        public void onPostExecute(String responseBody) {
 
             try{
 
                 // Set the token
+                // Uses Gson - https://github.com/google/gson
+                JsonParser parser = new JsonParser();
+                JsonObject json = (JsonObject) parser.parse(responseBody);
+
+                String accessToken = json.getAsJsonPrimitive("access_token").getAsString();
+
                 this.activity.setToken(accessToken);
+
+                // Store the response
+                this.activity.storeOauthResponse(responseBody);
 
                 // Get additional user details
                 // See if we can get the current user with our valid token

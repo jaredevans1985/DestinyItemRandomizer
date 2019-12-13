@@ -95,6 +95,7 @@ public class DownloadManifest extends IntentService {
             editor.commit();
 
             message="Download completed";
+            // TODO: This does not appear to pop up the button after successfully downloading the new manifest
 
         }
         catch(Exception e){
