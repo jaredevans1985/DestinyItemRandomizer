@@ -245,12 +245,20 @@ public class DestinyManifestReader {
                     // Get the path to determine where we are
                     String path = reader.getPath();
 
+                    // Split the path apart to use for hash checking
+                    String hash = "NOT_SET";
+                    String[] splitPath = path.split("\\.");
+
+                    if(splitPath.length >= 3) {
+                        hash = splitPath[2];
+                    }
+
                     // If this is the start of the inventory items, begin another object
                     if (path.equals("$.DestinyInventoryItemDefinition")) {
                         reader.beginObject();
                     }
                     // If this is our hash, return the json object and break the loop
-                    else if (unsortedItems.containsKey(path)) {
+                    else if (hash.equals("NOT_SET") == false && unsortedItems.containsKey(hash)) {
                         unsortedItems.get(path).setFromJsonObject((JsonObject) new Gson().fromJson(reader, JsonObject.class));
 
                         break;

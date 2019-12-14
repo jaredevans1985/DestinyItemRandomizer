@@ -1,5 +1,6 @@
 package com.example.destinyitemrandomizer.destinywrapper;
 
+import android.os.Debug;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import com.example.destinyitemrandomizer.MainActivity;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -125,9 +127,26 @@ public class DestinyInventoryManager {
 
                 // NEW THING: We're just going to put it all in the map, sort it out later
                 JsonObject item = element.getAsJsonObject();
-                String hashVal = item.getAsJsonPrimitive("itemHash").toString();
-                String instanceID = item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", "");
-                unsortedWeapons.put(hashVal, new DestinyItemInfo(instanceID));
+
+                // Test to see if the object is null
+                if(item != null) {
+                    String hashVal = item.getAsJsonPrimitive("itemHash").toString();
+                    JsonPrimitive instanceIDPrimitive = item.getAsJsonPrimitive("itemInstanceId");
+                    if(instanceIDPrimitive != null) {
+                        String instanceID = instanceIDPrimitive.toString().replace("\"", "");
+                        unsortedWeapons.put(hashVal, new DestinyItemInfo(instanceID));
+                    }
+                    else {
+                        // If we're here, it's because it's not a weapon/armor
+                        Log.d("ITEM_SORT", "instanceID didn't work " + item.toString());
+                    }
+
+                }
+                else {
+                    Log.d("ITEM_SORT", "element didn't work " + element.toString());
+                }
+
+
 
                 // Now that we have the default bucket, we can see if it's a weapon
                // if (buckets.containsKey(defaultBucket)) {
