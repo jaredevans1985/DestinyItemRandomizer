@@ -20,7 +20,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -225,7 +227,9 @@ public class DestinyManifestReader {
 
     // Move through the map of unsorted items and get their info
     // The idea is that, by doing it all at once now, we only have to go through the file once
-    public Map<String, DestinyItemInfo> sortAllUnsortedItems(Map<String, DestinyItemInfo> unsortedItems) {
+    public List<DestinyItemInfo> sortAllUnsortedItems(Map<String, String> unsortedItems) {
+
+        List<DestinyItemInfo> unsortedWeapons = new ArrayList<>();
 
         try{
             JsonObject itemInfo = null;
@@ -259,9 +263,14 @@ public class DestinyManifestReader {
                     }
                     // If this is our hash, return the json object and break the loop
                     else if (hash.equals("NOT_SET") == false && unsortedItems.containsKey(hash)) {
-                        unsortedItems.get(path).setFromJsonObject((JsonObject) new Gson().fromJson(reader, JsonObject.class));
+                        JsonObject itemObject = new Gson().fromJson(reader, JsonObject.class);
 
-                        break;
+                        // Only continue if this has a damage type
+                        if(itemObject.has("itemType") && itemObject.getAsJsonPrimitive("itemType").getAsInt() == 3) {
+                            DestinyItemInfo itemInfoObject = new DestinyItemInfo(itemObject, unsortedItems.get(hash));
+                            itemInfoObject.setFromJsonObject(itemObject);
+                            unsortedWeapons.add(itemInfoObject);
+                        }
                     }
                     // If this wasn't an object that we care about, move ahead
                     else
@@ -284,7 +293,7 @@ public class DestinyManifestReader {
             e.printStackTrace();
         }
 
-        return unsortedItems;
+        return unsortedWeapons;
     }
 
     public boolean doesPathContainHash(String path, HashMap<String, DestinyItemInfo> unsortedItems) {

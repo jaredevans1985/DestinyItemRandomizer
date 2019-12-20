@@ -17,6 +17,11 @@ public class DestinyItemInfo {
     public String itemBucket = "ITEM BUCKET NOT SET";
     public String itemElement = "ITEM ELEMENT NOT SET";
     public String itemPower = "ITEM POWER NOT SET";
+
+    public void setInstanceID(String instanceID) {
+        this.instanceID = instanceID;
+    }
+
     public String instanceID = "ITEM INSTANCE ID NOT SET";
     public String itemImgUrl = "ITEM IMG URL NOT SET";
     public boolean isExotic = false;
@@ -38,17 +43,11 @@ public class DestinyItemInfo {
         isExotic = exotic;
     }
 
-    public DestinyItemInfo(JsonObject itemInfo)
+    // This is the primary constructor used as we're reading items from the manifest in DestinyManifestReader
+    public DestinyItemInfo(JsonObject itemInfo, String instanceID)
     {
-        // NOTE: This REAL flimsy, no guarantee this worked by the time we're here
-        JsonObject item = itemInfo.getAsJsonObject();
-        String hashVal = item.getAsJsonPrimitive("itemHash").toString();
-        JsonObject manifestInfo = DestinyManifestReader.instance.findItemInfo(hashVal);
-
-        setFromJsonObject(manifestInfo);
-
-        // Use instance ID to get the item power
-        instanceID = item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", "");
+        setFromJsonObject(itemInfo);
+        this.instanceID = instanceID;
     }
 
     public void setFromJsonObject(JsonObject manifestInfo) {
@@ -66,6 +65,7 @@ public class DestinyItemInfo {
 
         isExotic = itemType.toLowerCase().contains("exotic");
     }
+
 
     // Return the string for the damage type
     public static String getElementName(String type) {

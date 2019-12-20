@@ -14,13 +14,10 @@ public class DestinyCharacterInfo {
     public DestinyItemInfo curPower;
     public String charDescription;
 
-    // Pass in the character info and the character equipment, store need pieces
+    // Pass in the character info and the character equipment
     public DestinyCharacterInfo(JsonObject charInfo, JsonArray charEquipped) {
         charDescription = buildCharacterDescription(charInfo);
         characterID = charInfo.getAsJsonPrimitive("characterId").toString();
-        curKinetic = new DestinyItemInfo(charEquipped.get(0).getAsJsonObject());
-        curEnergy = new DestinyItemInfo(charEquipped.get(1).getAsJsonObject());
-        curPower = new DestinyItemInfo(charEquipped.get(2).getAsJsonObject());
     }
 
     public static String buildCharacterDescription(JsonObject charInfo) {
