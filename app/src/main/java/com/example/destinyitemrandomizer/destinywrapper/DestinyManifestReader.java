@@ -2,6 +2,7 @@ package com.example.destinyitemrandomizer.destinywrapper;
 
 import android.os.Message;
 import android.text.style.TabStopSpan;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -227,7 +228,7 @@ public class DestinyManifestReader {
 
     // Move through the map of unsorted items and get their info
     // The idea is that, by doing it all at once now, we only have to go through the file once
-    public List<DestinyItemInfo> sortAllUnsortedItems(Map<String, String> unsortedItems) {
+    public List<DestinyItemInfo> sortAllUnsortedItems(List<ItemLookupInfo> unsortedItems) {
 
         List<DestinyItemInfo> unsortedWeapons = new ArrayList<>();
 
@@ -261,22 +262,58 @@ public class DestinyManifestReader {
                     if (path.equals("$.DestinyInventoryItemDefinition")) {
                         reader.beginObject();
                     }
-                    // If this is our hash, return the json object and break the loop
-                    else if (hash.equals("NOT_SET") == false && unsortedItems.containsKey(hash)) {
-                        JsonObject itemObject = new Gson().fromJson(reader, JsonObject.class);
+                    else if (hash.equals("NOT_SET") == false ) {
 
-                        // Only continue if this has a damage type
-                        if(itemObject.has("itemType") && itemObject.getAsJsonPrimitive("itemType").getAsInt() == 3) {
-                            DestinyItemInfo itemInfoObject = new DestinyItemInfo(itemObject, unsortedItems.get(hash));
-                            itemInfoObject.setFromJsonObject(itemObject);
-                            unsortedWeapons.add(itemInfoObject);
+                        // If we have a valid hash, now let's check to see if we have something that matches it in our unsorted items
+                        List<String> instanceIds = new ArrayList<>();
+                        List<ItemLookupInfo> itemsToRemove = new ArrayList<>();
+
+                        for(ItemLookupInfo item : unsortedItems) {
+                            if(item.getHash().equals(hash)) {
+                                // If they match, get the instance id
+                                instanceIds.add(item.getInstanceId().replace("\"", ""));
+                                // Keep track of indexes to remove
+                                itemsToRemove.add(item);
+                                // Finally, break out of the loop
+                                // NOTE: Can't break out, because we will miss multiple hashes
+                                //break;
+                            }
                         }
+
+                        // If we found an instanceId that matched to hash, use it
+                        if(instanceIds.size() > 0) {
+                            // Get the item at this hash
+                            JsonObject itemObject = new Gson().fromJson(reader, JsonObject.class);
+
+                            // Only continue if this is a weapon
+                            if (itemObject.has("itemType") && itemObject.getAsJsonPrimitive("itemType").getAsInt() == 3) {
+
+                                // Loop through all of the instanceIDs for this hash
+                                for(String curId : instanceIds) {
+                                    DestinyItemInfo itemInfoObject = new DestinyItemInfo(itemObject, curId);
+                                    itemInfoObject.setFromJsonObject(itemObject);
+                                    unsortedWeapons.add(itemInfoObject);
+                                }
+                            }
+
+                            // Remove any matching items from the unsorted list
+                            for(ItemLookupInfo item : itemsToRemove) {
+                                unsortedItems.remove(item);
+                            }
+                        }
+                        // If we didn't find a hash we like, skip ahead
+                        else
+                        {
+                            reader.skipValue();
+                        }
+
                     }
                     // If this wasn't an object that we care about, move ahead
                     else
                     {
                         reader.skipValue();
                     }
+
                 }
                 // If this wasn't an object that we care about, move ahead
                 else
@@ -296,8 +333,8 @@ public class DestinyManifestReader {
         return unsortedWeapons;
     }
 
-    public boolean doesPathContainHash(String path, HashMap<String, DestinyItemInfo> unsortedItems) {
 
+    public boolean doesPathContainHash(String path, HashMap<String, DestinyItemInfo> unsortedItems) {
 
 
         return false;

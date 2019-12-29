@@ -1,5 +1,6 @@
 package com.example.destinyitemrandomizer.destinywrapper;
 
+import android.content.ClipData;
 import android.os.Debug;
 import android.util.Log;
 
@@ -56,7 +57,7 @@ public class DestinyInventoryManager {
         // Item Map
         // Used before sorting, this item map has keys of item hash values, followed by an instance id
         // If this turns out to belong to a weapon, it will be used to crete a DestinyItemInfo object
-        Map<String, String> unsortedItems = new HashMap<>();
+        List<ItemLookupInfo> unsortedItems = new ArrayList<>();
 
         // Set the activity
         this.activity = activity;
@@ -79,7 +80,7 @@ public class DestinyInventoryManager {
             // Get character inventory
             JsonArray charInvArray = charsInv.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items");
 
-            // Iterate over inventory and place in buckets
+            // Iterate over inventory and place in unsorted list
             for(JsonElement element : charInvArray) {
                 JsonObject elAsObj = element.getAsJsonObject();
 
@@ -87,12 +88,30 @@ public class DestinyInventoryManager {
                 String itemHash = elAsObj.getAsJsonPrimitive("itemHash").toString();
 
                 String instanceID = null;
-                if(elAsObj.has("itemInstanceID")) {
-                    instanceID = elAsObj.getAsJsonPrimitive("itemInstanceID").toString();
-                }
+                if(elAsObj.has("itemInstanceId")) {
+                    instanceID = elAsObj.getAsJsonPrimitive("itemInstanceId").toString();
 
-                unsortedItems.put(itemHash, instanceID);
+                    unsortedItems.add(new ItemLookupInfo(itemHash, instanceID));
+                }
             }
+
+            // Iterate over equipped items and place in unsorted list
+            JsonArray charEqpArray = charsEquip.getAsJsonObject("data").getAsJsonObject(charId).getAsJsonArray("items");
+
+            for(JsonElement element : charEqpArray) {
+                JsonObject elAsObj = element.getAsJsonObject();
+
+                // Only try and place it in the bucket if it's in a weapon bucket
+                String itemHash = elAsObj.getAsJsonPrimitive("itemHash").toString();
+
+                String instanceID = null;
+                if(elAsObj.has("itemInstanceId")) {
+                    instanceID = elAsObj.getAsJsonPrimitive("itemInstanceId").toString();
+
+                    unsortedItems.add(new ItemLookupInfo(itemHash, instanceID));
+                }
+            }
+
         }
 
 
@@ -119,7 +138,7 @@ public class DestinyInventoryManager {
                     JsonPrimitive instanceIDPrimitive = item.getAsJsonPrimitive("itemInstanceId");
                     if(instanceIDPrimitive != null) {
                         String instanceID = instanceIDPrimitive.toString().replace("\"", "");
-                        unsortedItems.put(hashVal, instanceID);
+                        unsortedItems.add(new ItemLookupInfo(hashVal, instanceID));
                     }
                     else {
                         // If we're here, it's because it's not a weapon/armor
