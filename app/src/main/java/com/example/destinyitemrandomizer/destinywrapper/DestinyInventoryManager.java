@@ -151,80 +151,43 @@ public class DestinyInventoryManager {
                 }
 
 
-
-                // Now that we have the default bucket, we can see if it's a weapon
-               // if (buckets.containsKey(defaultBucket)) {
-                    // pass in instance id, default bucket, and manifest info
-                 //   createItemAndPlaceInBucket(item.getAsJsonPrimitive("itemInstanceId").toString().replace("\"", ""), defaultBucket, manifestInfo);
-                //}
             }
         }
 
 
         // Now that we have just a list of weapons, we need to sort them out
-        List<DestinyItemInfo> unsortedWeapons = manifest.sortAllUnsortedItems(unsortedItems);
+        List<DestinyItemInfo> unsortedWeapons = manifest.getAllWeaponData(unsortedItems);
 
-        Log.d("MANIFEST_READ", "We should have all of the manifest info for weapons now, there are this many weapons: " + unsortedWeapons.size());
+        //Log.d("MANIFEST_READ", "We should have all of the manifest info for weapons now, there are this many weapons: " + unsortedWeapons.size());
+
+        sortUnsortedWeapons(unsortedWeapons);
 
         // THIS IS FOR TESTING ONLY
-        //Map<String, DestinyItemInfo> randomItemAssortment = new HashMap<>();
-        //randomItemAssortment = getRandomLoadout();
+        Map<String, DestinyItemInfo> randomItemAssortment = getRandomLoadout();
+
+        Log.d("RANDOM_LOADOUT_TEST", "Here's the random loadout: "
+                + randomItemAssortment.get("kinetic").itemName + ", "
+                + randomItemAssortment.get("energy").itemName + ", "
+                + randomItemAssortment.get("power").itemName);
+    }
+
+    // This sorts the unsorted weapon list returned from the reader
+    public void sortUnsortedWeapons(List<DestinyItemInfo> unsortedWeapons) {
+        for(DestinyItemInfo item : unsortedWeapons) {
+            placeItemInBucket(item);
+        }
     }
 
     // This method takes destiny item info (returned from the manifest) and sorts it into the correct array
-    public void createItemAndPlaceInBucket(JsonElement itemInfo) {
-
-       /* // Make an item info object
-        DestinyItemInfo item = new DestinyItemInfo(itemInfo.getAsJsonObject());
+    public void placeItemInBucket(DestinyItemInfo item) {
 
         String itemBucket = buckets.get(item.itemBucket);
 
-        if(itemBucket == null) {
+        if (itemBucket == null) {
             Log.d("SORTING_ERROR", "Null exception trying to get item bucket");
         }
 
-        switch(itemBucket) {
-            case "kinetic":
-                kineticWeapons.add(item);
-                break;
-            case "energy":
-                energyWeapons.add(item);
-                break;
-            case "power":
-                powerWeapons.add(item);
-                break;
-            default:
-                Log.d("ITEM_SORTING_ERROR", "No bucket found for this item");
-                break;
-
-        }*/
-    }
-
-    // This method takes destiny item info and sorts it into the correct array
-    // This passes in the bucket string and the rest of the manifest info
-    public void createItemAndPlaceInBucket(String instanceNum, String bucketHash, JsonObject manifestInfo) {
-
-        // Get all the info here so we don't have to ask the manifest again
-        String itemName = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("name").toString();
-
-        String itemType = manifestInfo.getAsJsonPrimitive("itemTypeAndTierDisplayName").toString();
-
-        String itemElement = DestinyItemInfo.getElementName(manifestInfo.getAsJsonPrimitive("defaultDamageType").toString());
-
-        String itemImgUrl = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("icon").toString();
-
-        boolean isExotic = itemType.toLowerCase().contains("exotic");
-
-        // Make an item info object
-        DestinyItemInfo item = new DestinyItemInfo(itemName, itemType, itemElement, instanceNum, itemImgUrl, isExotic, bucketHash);
-
-        if(bucketHash == null) {
-            Log.d("SORTING_ERROR", "Null exception trying to get item bucket");
-        }
-
-        String itemBucket = buckets.get(item.itemBucket);
-
-        switch(itemBucket) {
+        switch (itemBucket) {
             case "kinetic":
                 kineticWeapons.add(item);
                 break;
@@ -240,6 +203,7 @@ public class DestinyInventoryManager {
 
         }
     }
+
 
     // This method returns a map that contains an item for each slot
     // The keys are "kinetic", "energy", and "power"
@@ -259,8 +223,7 @@ public class DestinyInventoryManager {
         exoticAllowed = !addRandomWeaponToMap(itemMap, "energy", exoticAllowed);
 
         // Get the power weapon
-        exoticAllowed = !addRandomWeaponToMap(itemMap, "power", exoticAllowed);
-
+        addRandomWeaponToMap(itemMap, "power", exoticAllowed);
 
         return itemMap;
     }

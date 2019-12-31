@@ -228,7 +228,7 @@ public class DestinyManifestReader {
 
     // Move through the map of unsorted items and get their info
     // The idea is that, by doing it all at once now, we only have to go through the file once
-    public List<DestinyItemInfo> sortAllUnsortedItems(List<ItemLookupInfo> unsortedItems) {
+    public List<DestinyItemInfo> getAllWeaponData(List<ItemLookupInfo> unsortedItems) {
 
         List<DestinyItemInfo> unsortedWeapons = new ArrayList<>();
 
