@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <include
-        android:id="@+id/entry1"
+        android:id="@+id/kineticView"
         layout="@layout/content_weapon"
         android:layout_width="0dp"
         android:layout_height="100dp"
@@ -38,17 +38,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
-        android:id="@+id/entry2"
+        android:id="@+id/energyView"
         layout="@layout/content_weapon"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        app:layout_constraintBottom_toTopOf="@+id/entry3"
+        app:layout_constraintBottom_toTopOf="@+id/powerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entry1" />
+        app:layout_constraintTop_toBottomOf="@+id/kineticView" />
 
     <include
-        android:id="@+id/entry3"
+        android:id="@+id/powerView"
         layout="@layout/content_weapon"
         android:layout_width="0dp"
         android:layout_height="100dp"

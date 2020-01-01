@@ -1,12 +1,7 @@
 package com.example.destinyitemrandomizer.destinywrapper;
 
-import android.content.ClipData;
-import android.os.Debug;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 
 import com.example.destinyitemrandomizer.MainActivity;
 import com.google.gson.JsonArray;
@@ -14,13 +9,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import java.io.File;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -50,6 +42,9 @@ public class DestinyInventoryManager {
 
     // Bucket Hashes
     Map<String, String> buckets;
+
+    // Store the current loadout for later reference
+    Map<String, DestinyItemInfo> currentLoadout;
 
     // Pass in the manifest file and start the sorting tasks
     public DestinyInventoryManager(MainActivity activity, JsonObject profileInv, JsonObject chars, JsonObject charsInv, JsonObject charsEquip)
@@ -162,13 +157,10 @@ public class DestinyInventoryManager {
 
         sortUnsortedWeapons(unsortedWeapons);
 
-        // THIS IS FOR TESTING ONLY
-        Map<String, DestinyItemInfo> randomItemAssortment = getRandomLoadout();
+        // NOTE: Not sure we really want to do this here, but we are!
+        // Get a random loadout
+        currentLoadout = getRandomLoadout();
 
-        Log.d("RANDOM_LOADOUT_TEST", "Here's the random loadout: "
-                + randomItemAssortment.get("kinetic").itemName + ", "
-                + randomItemAssortment.get("energy").itemName + ", "
-                + randomItemAssortment.get("power").itemName);
     }
 
     // This sorts the unsorted weapon list returned from the reader
@@ -251,7 +243,7 @@ public class DestinyInventoryManager {
         // Add it to the map
         itemMap.put(weaponType, weapon);
 
-        // Return if this weapon is exotic
+        // Return if this weapon is exotic or not
         return weapon.isExotic;
     }
 
@@ -281,6 +273,19 @@ public class DestinyInventoryManager {
         return weapon;
     }
 
+    // Get the requested weapon from the current loadout
+    public DestinyItemInfo getCurrentWeapon(WeaponType weapType) {
+        switch(weapType) {
+            case KINETIC:
+                return currentLoadout.get("kinetic");
+            case ENERGY:
+                return currentLoadout.get("energy");
+            case POWER:
+                return currentLoadout.get("power");
+            default:
+                return null;
+        }
+    }
 
 
 }

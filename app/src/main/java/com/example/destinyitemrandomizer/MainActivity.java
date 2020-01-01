@@ -7,12 +7,15 @@ import android.os.Bundle;
 
 import com.example.destinyitemrandomizer.destinywrapper.DestinyAsyncTasks.*;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyInventoryManager;
+import com.example.destinyitemrandomizer.destinywrapper.DestinyItemInfo;
+import com.example.destinyitemrandomizer.destinywrapper.WeaponType;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.Date;
 
@@ -254,11 +257,72 @@ public class MainActivity extends AppCompatActivity {
         // Set the manager
         inventory = invMan;
 
-        // Put the app in a usable mode
+        // Switch to loadout view
+        switchToResult();
+
     }
 
+    // Switch to the result screen and populate it with info
+    private void switchToResult() {
+        setContentView(R.layout.activity_result);
+
+        // Get the kinetic view
+        View kinView = findViewById(R.id.kineticView);
+
+        // Get the kinetic weapon
+        DestinyItemInfo kinWeapon = inventory.getCurrentWeapon(WeaponType.KINETIC);
+
+        // Set the kinetic values
+        setWeaponInfoFromInventory(kinView, kinWeapon);
 
 
+        // Get the energy view
+        View enView = findViewById(R.id.energyView);
+
+        // Get the energy weapon
+        DestinyItemInfo enWeapon = inventory.getCurrentWeapon(WeaponType.ENERGY);
+
+        // Set the energy values
+        setWeaponInfoFromInventory(enView, enWeapon);
+
+
+        // Get the power view
+        View powView = findViewById(R.id.powerView);
+
+        // Get the power weapon
+        DestinyItemInfo powWeapon = inventory.getCurrentWeapon(WeaponType.POWER);
+
+        // Set the power values
+        setWeaponInfoFromInventory(powView, powWeapon);
+
+
+    }
+
+    private void setWeaponInfoFromInventory(View infoPane, DestinyItemInfo weaponInfo) {
+        TextView name = infoPane.findViewById(R.id.weaponTitle);
+        name.setText(weaponInfo.itemName);
+
+        TextView weapType = infoPane.findViewById(R.id.weaponType);
+        weapType.setText(weaponInfo.itemType);
+
+        TextView element = infoPane.findViewById(R.id.weaponElement);
+        element.setText(weaponInfo.itemElement);
+
+        TextView power = infoPane.findViewById(R.id.weaponPower);
+        setItemPower(power, weaponInfo);
+
+        // TODO: Set the image of the weapon
+    }
+
+    public void setItemPower(TextView pane, DestinyItemInfo weapon) {
+
+        if(weapon.itemPower.equals("ITEM POWER NOT SET")) {
+            weapon.requestItemPower(this, pane);
+        }
+        else {
+            pane.setText(weapon.itemPower);
+        }
+    }
 }
 
 

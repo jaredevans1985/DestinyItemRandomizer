@@ -1,11 +1,15 @@
 package com.example.destinyitemrandomizer.destinywrapper;
 
 
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.destinyitemrandomizer.MainActivity;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import org.w3c.dom.Text;
 
 // This is a simple class that holds info about an item
 // It is meant to be returned from the inventory sorter
@@ -53,15 +57,15 @@ public class DestinyItemInfo {
     public void setFromJsonObject(JsonObject manifestInfo) {
 
         // Get the following info from the manifest
-        itemName = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("name").toString();
+        itemName = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("name").toString().replace("\"", "");
 
-        itemType = manifestInfo.getAsJsonPrimitive("itemTypeAndTierDisplayName").toString();
+        itemType = manifestInfo.getAsJsonPrimitive("itemTypeAndTierDisplayName").toString().replace("\"", "");
 
-        itemBucket = manifestInfo.getAsJsonObject("inventory").getAsJsonPrimitive("bucketTypeHash").toString();
+        itemBucket = manifestInfo.getAsJsonObject("inventory").getAsJsonPrimitive("bucketTypeHash").toString().replace("\"", "");
 
-        itemElement = getElementName(manifestInfo.getAsJsonPrimitive("defaultDamageType").toString());
+        itemElement = getElementName(manifestInfo.getAsJsonPrimitive("defaultDamageType").toString().replace("\"", ""));
 
-        itemImgUrl = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("icon").toString();
+        itemImgUrl = manifestInfo.getAsJsonObject("displayProperties").getAsJsonPrimitive("icon").toString().replace("\"", "");
 
         isExotic = itemType.toLowerCase().contains("exotic");
     }
@@ -84,8 +88,8 @@ public class DestinyItemInfo {
     }
 
     // Kick of the async task to get the item power
-    public void requestItemPower(MainActivity activity) {
-        DestinyAsyncTasks.DestinyTaskGetItemInstance instanceTask = new DestinyAsyncTasks.DestinyTaskGetItemInstance(this);
+    public void requestItemPower(MainActivity activity, TextView pane) {
+        DestinyAsyncTasks.DestinyTaskGetItemInstance instanceTask = new DestinyAsyncTasks.DestinyTaskGetItemInstance(activity, pane, this);
         String url = "https://www.bungie.net/Platform/Destiny2/" + activity.getMembershipType() + "/Profile/" + activity.getMembershipID() + "/Item/" + instanceID + "/?components=300";
         instanceTask.execute(url, activity.getToken());
     }

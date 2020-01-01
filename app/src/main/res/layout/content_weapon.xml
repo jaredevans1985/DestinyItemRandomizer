@@ -26,33 +26,39 @@
             android:id="@+id/weaponTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Weapon Title"
-            android:textSize="24sp"
+            android:autoSizeTextType="uniform"
+            android:text="NAME"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/weaponType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="WeaponType" />
+            android:autoSizeTextType="uniform"
+            android:text="TYPE"
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/weaponElement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="WeaponElement" />
+            android:autoSizeTextType="uniform"
+            android:text="ELEMENT"
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/weaponPower"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="WeaponPower"
-            android:textSize="20sp" />
+            android:autoSizeTextType="uniform"
+            android:text="POWER"
+            android:textSize="10sp" />
     </LinearLayout>
 
     <Button
         android:id="@+id/button4"
-        android:layout_width="match_parent"
+        android:layout_width="350dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:onClick="onClickSingleReroll"

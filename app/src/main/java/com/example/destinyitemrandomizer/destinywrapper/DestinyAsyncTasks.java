@@ -2,9 +2,13 @@ package com.example.destinyitemrandomizer.destinywrapper;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.destinyitemrandomizer.LoginActivity;
 import com.example.destinyitemrandomizer.MainActivity;
+import com.example.destinyitemrandomizer.R;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -408,9 +412,14 @@ public class DestinyAsyncTasks {
     // Params[0] is the url, params[1] is the OAuth token
     public static class DestinyTaskGetItemInstance extends AsyncTask<String, Void, JsonObject> {
         // Pass in the parent activity
+        private MainActivity activity;
+        private TextView pane;
         private DestinyItemInfo item;
 
-        public DestinyTaskGetItemInstance(DestinyItemInfo i) {
+
+        public DestinyTaskGetItemInstance(MainActivity activity, TextView pane, DestinyItemInfo i) {
+            this.activity = activity;
+            this.pane = pane;
             this.item = i;
         }
 
@@ -456,7 +465,10 @@ public class DestinyAsyncTasks {
         }
 
         public void onPostExecute(JsonObject response) {
+
             this.item.setPower(response);
+
+            this.activity.setItemPower(this.pane, this.item);
         }
     }
 
