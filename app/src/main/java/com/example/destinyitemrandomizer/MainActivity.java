@@ -11,10 +11,12 @@ import com.example.destinyitemrandomizer.destinywrapper.DestinyItemInfo;
 import com.example.destinyitemrandomizer.destinywrapper.WeaponType;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.squareup.picasso.Picasso;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -311,7 +313,8 @@ public class MainActivity extends AppCompatActivity {
         TextView power = infoPane.findViewById(R.id.weaponPower);
         setItemPower(power, weaponInfo);
 
-        // TODO: Set the image of the weapon
+        ImageView icon = infoPane.findViewById(R.id.weaponImage);
+        Picasso.get().load("http://www.bungie.net" + weaponInfo.itemImgUrl).into(icon);
     }
 
     public void setItemPower(TextView pane, DestinyItemInfo weapon) {

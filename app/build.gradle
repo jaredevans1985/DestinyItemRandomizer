@@ -47,4 +47,5 @@ dependencies {
     implementation files('libs/slf4j-api-1.6.1.jar')
     implementation 'org.json:com.springsource.org.json:1.0.0'
     implementation 'org.codehaus.jackson:jackson-xc:1.9.13'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
