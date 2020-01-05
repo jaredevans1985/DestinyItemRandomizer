@@ -203,7 +203,11 @@ public class MainActivity extends AppCompatActivity {
     // Reroll button callback, go back to roll screen
     public void onClickToRollScreen(View v)
     {
-        setContentView(R.layout.activity_roll);
+        // Create a new random loadout
+        inventory.getRandomLoadout();
+
+        updateResultScreen();
+
     }
 
     // Reroll in individual item
@@ -219,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         // Need some good error reporting
     }
 
-    // Random roll
+    // This does roll, but importantly it also creates the item database
     public void onClickRandomRoll(View v)
     {
         // Find all new items
@@ -268,6 +272,11 @@ public class MainActivity extends AppCompatActivity {
     private void switchToResult() {
         setContentView(R.layout.activity_result);
 
+        updateResultScreen();
+
+    }
+
+    private void updateResultScreen() {
         // Get the kinetic view
         View kinView = findViewById(R.id.kineticView);
 
@@ -296,8 +305,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Set the power values
         setWeaponInfoFromInventory(powView, powWeapon);
-
-
     }
 
     private void setWeaponInfoFromInventory(View infoPane, DestinyItemInfo weaponInfo) {

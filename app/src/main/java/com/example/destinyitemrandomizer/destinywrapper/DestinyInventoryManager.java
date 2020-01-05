@@ -159,7 +159,7 @@ public class DestinyInventoryManager {
 
         // NOTE: Not sure we really want to do this here, but we are!
         // Get a random loadout
-        currentLoadout = getRandomLoadout();
+        getRandomLoadout();
 
     }
 
@@ -216,6 +216,9 @@ public class DestinyInventoryManager {
 
         // Get the power weapon
         addRandomWeaponToMap(itemMap, "power", exoticAllowed);
+
+        // Set the current loadout
+        currentLoadout = itemMap;
 
         return itemMap;
     }

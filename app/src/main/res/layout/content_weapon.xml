@@ -8,12 +8,12 @@
 
     <ImageView
         android:id="@+id/weaponImage"
-        android:layout_width="220dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/weap_img_desc"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/common" />
+        android:scaleType="fitStart"
+        app:srcCompat="@drawable/exicon" />
 
     <LinearLayout
         android:id="@+id/weaponInfo"
