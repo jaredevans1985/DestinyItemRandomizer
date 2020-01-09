@@ -290,5 +290,15 @@ public class DestinyInventoryManager {
         }
     }
 
+    // TODO: Need a way to pick characters
+    // Equip current items
+    public void equipCurrentRoll() {
+
+        // Kinetic
+
+        DestinyAsyncTasks.DestinyTaskEquipItem getInventory = new DestinyAsyncTasks.DestinyTaskEquipItem(activity);
+        getInventory.execute(activity.getToken(), currentLoadout.get("kinetic").instanceID, characters.get(0).characterID, activity.getMembershipType());
+
+    }
 
 }

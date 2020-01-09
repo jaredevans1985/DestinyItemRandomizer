@@ -17,13 +17,13 @@ public class DestinyCharacterInfo {
     // Pass in the character info and the character equipment
     public DestinyCharacterInfo(JsonObject charInfo, JsonArray charEquipped) {
         charDescription = buildCharacterDescription(charInfo);
-        characterID = charInfo.getAsJsonPrimitive("characterId").toString();
+        characterID = charInfo.getAsJsonPrimitive("characterId").toString().replace("\"", "");
     }
 
     public static String buildCharacterDescription(JsonObject charInfo) {
-        String race = getCharacterRace(charInfo.getAsJsonPrimitive("raceType").getAsString());
-        String charClass = getCharacterClass(charInfo.getAsJsonPrimitive("classType").getAsString());
-        String power = charInfo.getAsJsonPrimitive("light").getAsString();
+        String race = getCharacterRace(charInfo.getAsJsonPrimitive("raceType").getAsString().replace("\"", ""));
+        String charClass = getCharacterClass(charInfo.getAsJsonPrimitive("classType").getAsString().replace("\"", ""));
+        String power = charInfo.getAsJsonPrimitive("light").getAsString().replace("\"", "");
 
         return power + " " + race + " " + charClass;
     }

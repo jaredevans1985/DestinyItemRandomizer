@@ -221,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
     {
         // Try to equip all items
         // Need some good error reporting
+        inventory.equipCurrentRoll();
     }
 
     // This does roll, but importantly it also creates the item database
