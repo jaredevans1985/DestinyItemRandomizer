@@ -559,4 +559,95 @@ public class DestinyAsyncTasks {
         }
     }
 
+    // Equip a specific item
+    public static class DestinyTaskTransferItem extends AsyncTask<String, Void, String> {
+        // Pass in the parent activity
+        private MainActivity activity;
+
+        public DestinyTaskTransferItem(MainActivity a) {
+            this.activity = a;
+        }
+
+        // param 0 - api key
+        // param 1 - itemId
+        // param 2 - characterId
+        // param 3 - membershipType
+        protected String doInBackground(String... params) {
+
+            // Create a request with the provided url and token
+            try {
+
+                URL url = new URL("https://www.bungie.net/Platform/Destiny2/Actions/Items/EquipItem/");
+                URLConnection c = url.openConnection();
+                int responseCode = -1;
+                HttpURLConnection httpURLConnection = (HttpURLConnection)c;
+
+                // https://www.baeldung.com/httpurlconnection-post
+
+                httpURLConnection.setRequestMethod("POST");
+
+                httpURLConnection.addRequestProperty("Content-Type", "application/json; utf-8");
+
+                httpURLConnection.setRequestProperty("Accept", "application/json");
+
+                // Set oauth info
+                httpURLConnection.setRequestProperty("X-API-KEY", "7f2b4c1bfb4c4816a3f57cff6b3f8c53");
+                httpURLConnection.setRequestProperty("Authorization", "Bearer " + params[0]);
+
+                httpURLConnection.setDoOutput(true);
+
+                // Set body
+                String jsonInputString = "{\"itemId\": \"" + params[1] + "\", \"characterId\": \"" + params[2] + "\", \"membershipType\": \"" + params[3] + "\"}";
+
+                try(OutputStream os = httpURLConnection.getOutputStream()) {
+                    byte[] input = jsonInputString.getBytes("utf-8");
+                    os.write(input, 0, input.length);
+                }
+
+
+
+                // Read response
+                String responseBody = "NO RESPONSE";
+
+                //httpURLConnection.connect();
+                responseCode = httpURLConnection.getResponseCode();
+                InputStream inputStream;
+                if (responseCode == 400 || responseCode == 500) {
+                    responseBody = OAuthUtils.saveStreamAsString(httpURLConnection.getErrorStream());
+                } else {
+                    try(BufferedReader br = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(), "utf-8"))) {
+                        StringBuilder response = new StringBuilder();
+                        String responseLine;
+                        while ((responseLine = br.readLine()) != null) {
+                            response.append(responseLine.trim());
+                        }
+                        responseBody = response.toString();
+                    }
+                }
+
+
+                // This is weird, but the response I get has a ton of dead characters, I so I'm taking them out
+                //responseBody = responseBody.replaceAll("\u0000", "");
+
+                return responseBody;
+
+            } catch (java.io.IOException e) {
+                Log.d("API_GET_ERROR", "Get request failed with error " + e.getMessage());
+            }
+
+            return null;
+        }
+
+        public void onPostExecute(String responseBody) {
+
+            try{
+                Log.d("EQUIP_ITEM", responseBody);
+            }
+            catch (NullPointerException e)
+            {
+                Log.d("OAUTH_REFRESH_ERROR", "ERROR: No valid Oauth refresh response, try again");
+            }
+        }
+    }
+
 }

@@ -264,14 +264,26 @@ public class DestinyManifestReader {
                     }
                     else if (hash.equals("NOT_SET") == false ) {
 
+                        // class used for storing instance info
+                        class InstanceData {
+                            public String id;
+                            public String owner;
+
+                            InstanceData(String i, String o) {
+                                id = i;
+                                owner = o;
+                            }
+                        }
+
                         // If we have a valid hash, now let's check to see if we have something that matches it in our unsorted items
-                        List<String> instanceIds = new ArrayList<>();
+                        List<InstanceData> instanceIds = new ArrayList<>();
                         List<ItemLookupInfo> itemsToRemove = new ArrayList<>();
+
 
                         for(ItemLookupInfo item : unsortedItems) {
                             if(item.getHash().equals(hash)) {
                                 // If they match, get the instance id
-                                instanceIds.add(item.getInstanceId().replace("\"", ""));
+                                instanceIds.add(new InstanceData(item.getInstanceId().replace("\"", ""), item.getOwnerId()));
                                 // Keep track of indexes to remove
                                 itemsToRemove.add(item);
                                 // Finally, break out of the loop
@@ -289,8 +301,8 @@ public class DestinyManifestReader {
                             if (itemObject.has("itemType") && itemObject.getAsJsonPrimitive("itemType").getAsInt() == 3) {
 
                                 // Loop through all of the instanceIDs for this hash
-                                for(String curId : instanceIds) {
-                                    DestinyItemInfo itemInfoObject = new DestinyItemInfo(itemObject, curId);
+                                for(InstanceData curId : instanceIds) {
+                                    DestinyItemInfo itemInfoObject = new DestinyItemInfo(itemObject, curId.id, hash, curId.owner);
                                     itemInfoObject.setFromJsonObject(itemObject);
                                     unsortedWeapons.add(itemInfoObject);
                                 }

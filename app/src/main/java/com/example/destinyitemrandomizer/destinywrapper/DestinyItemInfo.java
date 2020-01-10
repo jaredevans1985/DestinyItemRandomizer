@@ -21,38 +21,28 @@ public class DestinyItemInfo {
     public String itemBucket = "ITEM BUCKET NOT SET";
     public String itemElement = "ITEM ELEMENT NOT SET";
     public String itemPower = "ITEM POWER NOT SET";
+    public String itemHash = "ITEM HASH NOT SET";
+    public String itemOwnerId = "NONE";
+    public String instanceID;
+    public String itemImgUrl = "ITEM IMG URL NOT SET";
+    public boolean isExotic = false;
 
     public void setInstanceID(String instanceID) {
         this.instanceID = instanceID;
     }
 
-    public String instanceID = "ITEM INSTANCE ID NOT SET";
-    public String itemImgUrl = "ITEM IMG URL NOT SET";
-    public boolean isExotic = false;
-
-    public DestinyItemInfo(){}
-
-    public DestinyItemInfo(String instanceID){
-        instanceID = instanceID;
-    }
-
-    public DestinyItemInfo(String name, String type, String element, String instance, String imgUrl, boolean exotic, String bucketHash)
-    {
-        itemName = name;
-        itemType = type;
-        itemBucket = bucketHash;
-        itemElement = element;
-        instanceID = instance;
-        itemImgUrl = imgUrl;
-        isExotic = exotic;
-    }
-
     // This is the primary constructor used as we're reading items from the manifest in DestinyManifestReader
-    public DestinyItemInfo(JsonObject itemInfo, String instanceID)
+    public DestinyItemInfo(JsonObject itemInfo, String instanceID, String hash, String ownerId)
     {
         setFromJsonObject(itemInfo);
         this.instanceID = instanceID;
+        this.itemHash = hash;
+
+        if(ownerId != null) {
+            this.itemOwnerId = ownerId;
+        }
     }
+
 
     public void setFromJsonObject(JsonObject manifestInfo) {
 

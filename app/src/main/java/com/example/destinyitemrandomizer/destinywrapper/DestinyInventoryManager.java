@@ -86,7 +86,7 @@ public class DestinyInventoryManager {
                 if(elAsObj.has("itemInstanceId")) {
                     instanceID = elAsObj.getAsJsonPrimitive("itemInstanceId").toString();
 
-                    unsortedItems.add(new ItemLookupInfo(itemHash, instanceID));
+                    unsortedItems.add(new ItemLookupInfo(itemHash, instanceID, charId));
                 }
             }
 
@@ -103,7 +103,7 @@ public class DestinyInventoryManager {
                 if(elAsObj.has("itemInstanceId")) {
                     instanceID = elAsObj.getAsJsonPrimitive("itemInstanceId").toString();
 
-                    unsortedItems.add(new ItemLookupInfo(itemHash, instanceID));
+                    unsortedItems.add(new ItemLookupInfo(itemHash, instanceID, charId, true));
                 }
             }
 
@@ -133,7 +133,7 @@ public class DestinyInventoryManager {
                     JsonPrimitive instanceIDPrimitive = item.getAsJsonPrimitive("itemInstanceId");
                     if(instanceIDPrimitive != null) {
                         String instanceID = instanceIDPrimitive.toString().replace("\"", "");
-                        unsortedItems.add(new ItemLookupInfo(hashVal, instanceID));
+                        unsortedItems.add(new ItemLookupInfo(hashVal, instanceID, null));
                     }
                     else {
                         // If we're here, it's because it's not a weapon/armor
