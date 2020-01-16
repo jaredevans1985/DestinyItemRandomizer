@@ -116,7 +116,7 @@ public class DestinyInventoryManager {
         JsonArray inventoryItems = profileInv.getAsJsonObject("data").getAsJsonArray("items");
 
 
-        // Iterate over inventory and place in buckets
+        // Iterate over non-character inventory and place in buckets
         for(JsonElement element : inventoryItems) {
 
             // Only try and place it in the array if it's in a bucket we care about (in this case, general)
@@ -294,11 +294,40 @@ public class DestinyInventoryManager {
     // Equip current items
     public void equipCurrentRoll() {
 
+        // Steps for equipping
+        // 1. Is it already equipped for the selected character? If true, done
+        // 2. Is it in that character's inventory? If so, equip it
+        // NOTE: During steps 3-5, if the character's inventory is already full, first transfer a random inventory item to the vault
+        // 3. Is it in the vault? If so, transfer, then equip
+        // 4. Is it equipped on another character? If so:
+        //      a. Choose another item on that character in that slot, and equip it to them
+        //      b. Transfer the first item to the vault
+        //      c. Transfer it to the equipping character
+        //      d. Equip it to that character
+        // 5. Is it on another character and not equipped? If so:
+        //      b. Transfer the first item to the vault
+        //      c. Transfer it to the equipping character
+        //      d. Equip it to that character
+
         // Kinetic
 
-        DestinyAsyncTasks.DestinyTaskEquipItem getInventory = new DestinyAsyncTasks.DestinyTaskEquipItem(activity);
-        getInventory.execute(activity.getToken(), currentLoadout.get("kinetic").instanceID, characters.get(0).characterID, activity.getMembershipType());
+        // Energy
+
+        // Power
 
     }
+
+    // Equip an item
+    // Must already be in character inventory
+    // Can be called from async tasks
+    public void equipItem() {}
+
+    // Transfer item to/from vault
+    // Can be called from async tasks
+    public void vaultTransfer(boolean transferToVault) {}
+
+    // Equip a random item in the player's inventory
+    // This is used to make the equipped item available for transferring
+    public void equipRandomInventoryItem() {}
 
 }

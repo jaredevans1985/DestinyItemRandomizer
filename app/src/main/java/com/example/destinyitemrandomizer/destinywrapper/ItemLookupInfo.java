@@ -5,7 +5,7 @@ public class ItemLookupInfo {
     private String hash;
     private String instanceId;
     private String ownerId;
-    private boolean isEquipped;
+    private boolean isEquipped = false;
 
     public boolean isEquipped() {
         return isEquipped;

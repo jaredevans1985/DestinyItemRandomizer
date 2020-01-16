@@ -268,10 +268,12 @@ public class DestinyManifestReader {
                         class InstanceData {
                             public String id;
                             public String owner;
+                            public boolean isEquipped;
 
-                            InstanceData(String i, String o) {
+                            InstanceData(String i, String o, boolean e) {
                                 id = i;
                                 owner = o;
+                                isEquipped = e;
                             }
                         }
 
@@ -283,7 +285,7 @@ public class DestinyManifestReader {
                         for(ItemLookupInfo item : unsortedItems) {
                             if(item.getHash().equals(hash)) {
                                 // If they match, get the instance id
-                                instanceIds.add(new InstanceData(item.getInstanceId().replace("\"", ""), item.getOwnerId()));
+                                instanceIds.add(new InstanceData(item.getInstanceId().replace("\"", ""), item.getOwnerId(), item.isEquipped()));
                                 // Keep track of indexes to remove
                                 itemsToRemove.add(item);
                                 // Finally, break out of the loop
@@ -302,7 +304,7 @@ public class DestinyManifestReader {
 
                                 // Loop through all of the instanceIDs for this hash
                                 for(InstanceData curId : instanceIds) {
-                                    DestinyItemInfo itemInfoObject = new DestinyItemInfo(itemObject, curId.id, hash, curId.owner);
+                                    DestinyItemInfo itemInfoObject = new DestinyItemInfo(itemObject, curId.id, hash, curId.owner, curId.isEquipped);
                                     itemInfoObject.setFromJsonObject(itemObject);
                                     unsortedWeapons.add(itemInfoObject);
                                 }
