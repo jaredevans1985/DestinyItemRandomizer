@@ -22,7 +22,7 @@ public class DestinyCharacterInfo {
         String charClass = getCharacterClass(charInfo.getAsJsonPrimitive("classType").getAsString().replace("\"", ""));
         String power = charInfo.getAsJsonPrimitive("light").getAsString().replace("\"", "");
 
-        return power + " " + race + " " + charClass;
+        return power + " " + race + "\n" + charClass;
     }
 
     public static String getCharacterRace(String raceType) {

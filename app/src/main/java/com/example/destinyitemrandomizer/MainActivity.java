@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.destinyitemrandomizer.destinywrapper.DestinyAsyncTasks.*;
+import com.example.destinyitemrandomizer.destinywrapper.DestinyCharacterInfo;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyInventoryManager;
 import com.example.destinyitemrandomizer.destinywrapper.DestinyItemInfo;
 import com.example.destinyitemrandomizer.destinywrapper.WeaponType;
@@ -16,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -210,11 +212,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Reroll in individual item
-    public void onClickSingleReroll(View v)
-    {
-        // Do some rerolling here
-    }
 
     // Equip button callback
     public void onClickEquipItems(View v)
@@ -306,6 +303,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Set the power values
         setWeaponInfoFromInventory(powView, powWeapon);
+
+        // Update character buttons
+        Button char1 = findViewById(R.id.btnChar1);
+        Button char2 = findViewById(R.id.btnChar2);
+        Button char3 = findViewById(R.id.btnChar3);
+
+        char1.setText(inventory.characters.get(0).charDescription);
+        char2.setText(inventory.characters.get(1).charDescription);
+        char3.setText(inventory.characters.get(2).charDescription);
+
     }
 
     private void setWeaponInfoFromInventory(View infoPane, DestinyItemInfo weaponInfo) {

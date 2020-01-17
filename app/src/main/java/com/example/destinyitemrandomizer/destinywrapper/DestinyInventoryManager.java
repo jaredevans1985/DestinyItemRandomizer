@@ -33,7 +33,7 @@ public class DestinyInventoryManager {
     DestinyManifestReader manifest;
 
     // The currently equipped items for each character
-    List<DestinyCharacterInfo> characters = new ArrayList<>();
+    public List<DestinyCharacterInfo> characters = new ArrayList<>();
 
     // Sorted item lists
     List<DestinyItemInfo> kineticWeapons = new ArrayList<>();
