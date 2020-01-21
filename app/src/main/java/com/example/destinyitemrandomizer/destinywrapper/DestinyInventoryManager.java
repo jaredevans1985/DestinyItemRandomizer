@@ -46,6 +46,9 @@ public class DestinyInventoryManager {
     // Store the current loadout for later reference
     Map<String, DestinyItemInfo> currentLoadout;
 
+    // Selected Character
+    private int selectedCharacterIndex = 0;
+
     // Pass in the manifest file and start the sorting tasks
     public DestinyInventoryManager(MainActivity activity, JsonObject profileInv, JsonObject chars, JsonObject charsInv, JsonObject charsEquip)
     {
@@ -329,5 +332,18 @@ public class DestinyInventoryManager {
     // Equip a random item in the player's inventory
     // This is used to make the equipped item available for transferring
     public void equipRandomInventoryItem() {}
+
+
+    // Set the character for equipping
+    public void setSelectedCharacter(int index) {
+        if(index < 0) {
+            index = 0;
+        }
+        else if (index > characters.size()) {
+            index = characters.size() - 1;
+        }
+
+        selectedCharacterIndex = index;
+    }
 
 }

@@ -2,6 +2,7 @@ package com.example.destinyitemrandomizer;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -339,6 +340,53 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             pane.setText(weapon.itemPower);
+        }
+    }
+
+    // Char select buttons
+    public void onClickCharOne(View v) {
+        setCharacter(0);
+    }
+
+    public void onClickCharTwo(View v) {
+        setCharacter(1);
+    }
+
+    public void onClickCharThree(View v) {
+        setCharacter(2);
+    }
+
+    private void setCharacter(int index) {
+        changeButtonColors(index);
+
+        inventory.setSelectedCharacter(index);
+    }
+
+    private void changeButtonColors(int index) {
+        Button char1 = findViewById(R.id.btnChar1);
+        Button char2 = findViewById(R.id.btnChar2);
+        Button char3 = findViewById(R.id.btnChar3);
+
+        int highlight = Color.argb(1, 255, 155, 155);
+        int reset = Color.argb(1, 200, 200, 200);
+
+
+        switch(index) {
+            case 0:
+                char1.setBackgroundColor(highlight);
+                char2.setBackgroundColor(reset);
+                char3.setBackgroundColor(reset);
+                break;
+            case 1:
+                char2.setBackgroundColor(highlight);
+                char1.setBackgroundColor(reset);
+                char3.setBackgroundColor(reset);
+                break;
+            case 2:
+                char3.setBackgroundColor(highlight);
+                char1.setBackgroundColor(reset);
+                char2.setBackgroundColor(reset);
+                break;
         }
     }
 }
